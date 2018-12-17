@@ -1,6 +1,6 @@
 # graph-maker
 
-> sv编辑器
+> svg编辑器
 
 #### Build Setup
 

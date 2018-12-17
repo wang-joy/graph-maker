@@ -1,6 +1,6 @@
 'use strict'
 
-import { app, BrowserWindow } from 'electron'
+import { app, BrowserWindow, screen } from 'electron'
 
 /**
  * Set `__static` path to static files in production
@@ -14,19 +14,21 @@ let mainWindow
 const winURL = process.env.NODE_ENV === 'development'
   ? `http://localhost:9080`
   : `file://${__dirname}/index.html`
-
 function createWindow () {
+  // 获取屏幕大小，并设置全屏
+  var size = screen.getPrimaryDisplay().workAreaSize
   /**
    * Initial window options
    */
-  mainWindow = new BrowserWindow({
-    height: 563,
+  const winConfig = {
+    height: size.height,
     useContentSize: true,
-    width: 1000
-  })
-
+    width: size.width
+  }
+  mainWindow = new BrowserWindow(winConfig)
   mainWindow.loadURL(winURL)
-
+  // 最大化
+  mainWindow.maximize()
   mainWindow.on('closed', () => {
     mainWindow = null
   })

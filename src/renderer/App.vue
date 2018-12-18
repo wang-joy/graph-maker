@@ -6,10 +6,19 @@
 
 <script>
   export default {
-    name: 'graph-maker'
+    name: 'graph-maker',
+    mounted () {
+      let win = this.$electron.remote.getCurrentWindow()
+      let size = win.getContentSize()
+      let that = this
+      that.$store.dispatch('winResize', size)
+      window.onresize = function () {
+        size = win.getContentSize()
+        that.$store.dispatch('winResize', size)
+      }
+    }
   }
 </script>
 
 <style>
-  /* CSS */
 </style>

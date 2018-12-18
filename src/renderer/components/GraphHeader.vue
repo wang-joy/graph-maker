@@ -8,8 +8,17 @@
 <script>
 import GraphMenu from './header/GraphMenu'
 import GraphToolsBar from './header/GraphToolsBar'
+import {mapMutations} from 'vuex'
+import types from '../store/mutations-type'
 export default {
-  components: {GraphMenu, GraphToolsBar}
+  components: {GraphMenu, GraphToolsBar},
+  methods: {
+    ...mapMutations({setHeight: types.SET_HEADER_HEIGHT})
+  },
+  mounted () {
+    let rect = this.$el.getBoundingClientRect()
+    this.setHeight(rect.height)
+  }
 }
 </script>
 

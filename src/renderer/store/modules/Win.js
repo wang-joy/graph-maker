@@ -35,10 +35,11 @@ const actions = {
 }
 const getters = {
   workHeight: state => {
-    return state.winHeight - state.headerHeight - state.footerHeight
+    console.log(state.headerHeight)
+    return state.winHeight - state.headerHeight - state.footerHeight - 2
   },
   workMainWidth: state => {
-    return state.winWidth - state.lefterWidth - state.righterWidth
+    return state.winWidth - state.lefterWidth - state.righterWidth - 2
   }
 }
 export default {

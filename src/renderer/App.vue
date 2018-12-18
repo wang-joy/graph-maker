@@ -12,6 +12,7 @@
       let size = win.getContentSize()
       let that = this
       that.$store.dispatch('winResize', size)
+      console.log(size)
       window.onresize = function () {
         size = win.getContentSize()
         that.$store.dispatch('winResize', size)

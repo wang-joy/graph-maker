@@ -25,6 +25,7 @@ export default {
 <style scoped>
 .graph-header{
   width: 100%;
+  height: 100px;
   background-color: rgb(240,240,240);
 }
 </style>

@@ -1,37 +1,42 @@
 <template>
-  <div class="graph-maker">
-    <graph-header ref="header"></graph-header>
+  <div class="graph-maker" :style="style">
+    <graph-header></graph-header>
     <div class="graph-work" :style="{height: workHeight + 'px'}">
-      <graph-left ref="lefter"></graph-left>
+      <graph-lefter></graph-lefter>
+      <graph-center :style="{width: workMainWidth + 'px'}"></graph-center>
+      <graph-righter></graph-righter>
     </div>
-    <graph-footer ref="footer"></graph-footer>
+    <graph-footer></graph-footer>
   </div>
 </template>
 <script>
 import GraphHeader from './GraphHeader'
-import GraphLeft from './GraphLeft'
+import GraphLefter from './GraphLefter'
 import GraphFooter from './GraphFooter'
-import {mapGetters} from 'vuex'
+import GraphCenter from './GraphCenter'
+import GraphRighter from './GraphRighter'
+import {mapGetters, mapState} from 'vuex'
 export default {
-  components: {GraphHeader, GraphLeft, GraphFooter},
+  components: {GraphHeader, GraphLefter, GraphFooter, GraphCenter, GraphRighter},
   computed: {
+    ...mapState({
+      height: state => state.Win.winHeight,
+      width: state => state.Win.winWidth
+    }),
+    style () {
+      return {
+        width: this.width + 'px',
+        height: this.height + 'px'
+      }
+    },
     ...mapGetters(['workHeight', 'workMainWidth'])
-  },
-  data () {
-    return {
-    }
-  },
-  mounted () {
   }
 
 }
 </script>
 
 <style>
-.graph-maker{
-  width: 100%;
-  height: 100%;
-  min-width: 1200px;
-  min-height: 800px;
+.graph-work{
+  font-size: 0;
 }
 </style>

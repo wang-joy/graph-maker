@@ -8,7 +8,7 @@ export default new Router({
     {
       path: '/',
       name: 'landing-page',
-      component: require('@/components/GraphMaker').default
+      component: require('@/components/Test').default
     },
     {
       path: '*',

@@ -1,6 +1,6 @@
 <template>
   <div class="graph-draw" :style="style">
-
+    <div :id="id"></div>
   </div>
 </template>
 

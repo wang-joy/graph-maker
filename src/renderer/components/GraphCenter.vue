@@ -1,10 +1,8 @@
 <template>
   <div class="graph-center">
-    <el-tabs type="border-card" class="my-tabs" closable v-model="val" @tab-remove="removeTab" @tab-click='clickTab'>
-      <el-tab-pane v-for="item of tabList" :name="item.name" :label="item.label" :key="item.name"  class="my-tab-pane">
-        <div class="my-pane" :style="{height: height + 'px'}">
-          
-        </div>
+    <el-tabs type="border-card" class="my-tabs" closable v-model="val">
+      <el-tab-pane v-for="item of svgs" :name="item.name" :label="item.label" :key="item.name"  class="my-tab-pane">
+        <div class="my-pane" :style="{height: height + 'px'}"></div>
       </el-tab-pane>
     </el-tabs>
   </div>
@@ -12,13 +10,11 @@
 
 <script>
 import GraphDraw from './center/GraphDraw'
-import {mapGetters} from 'vuex'
+import {mapGetters, mapState} from 'vuex'
 export default {
   data () {
     return {
-      val: '0',
-      tabList: [],
-      count: 0
+      val: '0'
     }
   },
   components: {GraphDraw},
@@ -27,7 +23,13 @@ export default {
       var height = this.workHeight - 40
       return height
     },
-    ...mapGetters(['workHeight'])
+    ...mapGetters(['workHeight']),
+    ...mapState(['svgs'])
+  },
+  watch: {
+    svgs () {
+      console.log(this.svgs)
+    }
   }
 
 }

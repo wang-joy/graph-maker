@@ -8,7 +8,8 @@
         <el-dropdown-item
           v-for="(item, i) in menu.items"
           class="my-dropdown-item"
-          :key="i">
+          :key="i"
+          @click.native="item.handler">
           {{item.title}}
         </el-dropdown-item>
       </el-dropdown-menu>
@@ -25,17 +26,25 @@ export default {
           title: '文件',
           items: [
             {
-              title: '新建文件'
+              title: '新建文件',
+              handler: this.create
             },
             {
-              title: '保存文件'
+              title: '保存文件',
+              handler: this.create
             },
             {
-              title: '打开文件'
+              title: '打开文件',
+              handler: this.create
             }
           ]
         }
       ]
+    }
+  },
+  methods: {
+    create () {
+      this.$store.dispatch('create')
     }
   }
 }

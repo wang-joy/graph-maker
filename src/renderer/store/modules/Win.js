@@ -35,7 +35,6 @@ const actions = {
 }
 const getters = {
   workHeight: state => {
-    console.log(state.headerHeight)
     return state.winHeight - state.headerHeight - state.footerHeight - 2
   },
   workMainWidth: state => {

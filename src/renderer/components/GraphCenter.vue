@@ -1,8 +1,13 @@
 <template>
-  <div class="graph-center">
-    <el-tabs type="border-card" class="my-tabs" closable v-model="val">
-      <el-tab-pane v-for="item of svgs" :name="item.name" :label="item.label" :key="item.name"  class="my-tab-pane">
-        <div class="my-pane" :style="{height: height + 'px'}"></div>
+  <div class="graph-center" :style="{height: workHeight + 'px' }">
+    <el-tabs type="border-card" class="my-tabs" closable v-model="val" @tab-remove="remove" :style="{height: workHeight - 2+ 'px' }" @tab-click='click'>
+      <el-tab-pane
+        v-for="item of tabs"
+        :name="item.name"
+        :label="item.label"
+        :key="item.name"
+        class="my-tab-pane">
+        <graph-work-area :id="item.name"></graph-work-area>
       </el-tab-pane>
     </el-tabs>
   </div>
@@ -10,25 +15,34 @@
 
 <script>
 import GraphDraw from './center/GraphDraw'
-import {mapGetters, mapState} from 'vuex'
+import GraphWorkArea from './center/GraphWorkArea'
+import {mapState, mapActions, mapGetters} from 'vuex'
 export default {
   data () {
     return {
-      val: '0'
     }
   },
-  components: {GraphDraw},
+  components: {GraphDraw, GraphWorkArea},
   computed: {
-    height () {
-      var height = this.workHeight - 40
-      return height
+    ...mapState({
+      tabs: state => state.list
+    }),
+    val: {
+      get () {
+        return this.$store.state.active
+      },
+      set (val) {
+        this.$store.dispatch('setActive', val)
+      }
     },
-    ...mapGetters(['workHeight']),
-    ...mapState(['svgs'])
+    ...mapGetters(['workHeight'])
   },
-  watch: {
-    svgs () {
-      console.log(this.svgs)
+  methods: {
+    ...mapActions({
+      remove: 'removeSvg'
+    }),
+    click () {
+      console.log(event)
     }
   }
 
@@ -46,8 +60,5 @@ export default {
 .graph-center .el-tabs--border-card>.el-tabs__content{
   margin: 0;
   padding: 0;
-}
-.my-pane{
-  overflow: auto;
 }
 </style>

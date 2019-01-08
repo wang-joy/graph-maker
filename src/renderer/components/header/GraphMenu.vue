@@ -26,15 +26,15 @@ export default {
           title: '文件',
           items: [
             {
-              title: '新建文件',
+              title: '新建',
               handler: this.create
             },
             {
-              title: '保存文件',
+              title: '保存',
               handler: this.create
             },
             {
-              title: '打开文件',
+              title: '打开',
               handler: this.create
             }
           ]
@@ -44,7 +44,7 @@ export default {
   },
   methods: {
     create () {
-      this.$store.dispatch('create')
+      this.$store.dispatch('createSvg')
     }
   }
 }

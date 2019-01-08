@@ -1,29 +1,29 @@
 <template>
-  <div class="graph-draw" :style="style">
-    <div :id="id"></div>
-  </div>
+  <div :id="id" :style="style"></div>
 </template>
 
 <script>
+import SVG from 'svg.js'
 export default {
-  data () {
-    return {
-      width: 1800,
-      height: 1800
-    }
-  },
   computed: {
+    id () {
+      return 'svg_' + this.svg.id
+    },
     style () {
       return {
-        width: this.width + 'px',
-        height: this.height + 'px'
+        width: this.svg.width + 'px',
+        height: this.svg.height + 'px'
       }
     }
   },
   props: {
-    id: {
+    svg: {
       required: true
     }
+  },
+  mounted () {
+    let draw = SVG(this.id)
+    this.svg.setDraw(draw)
   }
 }
 </script>

@@ -9,7 +9,7 @@
         class="my-el-collapse-item">
           <a v-for="(item, index) in shape.list"
             :key="index"
-            @click.stop="createShape(item.type)"
+            @click.capture="createShape(item.type)"
             class="shape">
             <graph-icon :type="item.icon"></graph-icon>
           </a>
@@ -20,8 +20,12 @@
 
 <script>
 import GraphIcon from './icon/GraphIcon'
-import {mapMutations} from 'vuex'
+import {mapMutations, mapState} from 'vuex'
 import types from '../store/mutations-type'
+import SvgManager from '@/svg/manager/svg-manager'
+import shapes from '@/svg/shape/index'
+import ShapeUtils from '@/svg/utils/shape'
+import ShapeEvts from '@/svg/evts/ShapeEvts'
 export default {
   components: {GraphIcon},
   data () {
@@ -83,11 +87,32 @@ export default {
     }
   },
   methods: {
-    ...mapMutations({setWidth: types.SET_LEFTER_WIDTH})
+    ...mapMutations({setWidth: types.SET_LEFTER_WIDTH}),
+    createShape (type) {
+      if (this.svg) {
+        let draw = this.svg.draw
+        if (draw.remember('_mode') !== 'drawing') {
+          if (type !== 'image') {
+            draw.remember('_mode', 'drawstart')
+            draw.remember('_type', type)
+          } else {
+            let shape = shapes[type]()
+            draw.add(shape)
+            shape.loaded(ShapeEvts.imgLoaded)
+            ShapeUtils.init(shape, type)
+          }
+        }
+      }
+    }
   },
   mounted () {
     let rect = this.$el.getBoundingClientRect()
     this.setWidth(rect.width)
+  },
+  computed: {
+    ...mapState({
+      svg: state => SvgManager.getById(state.active)
+    })
   }
 }
 </script>

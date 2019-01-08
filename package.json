@@ -55,7 +55,10 @@
   "dependencies": {
     "axios": "^0.18.0",
     "element-ui": "^2.4.11",
+    "svg.draggable.js": "^2.2.1",
+    "svg.draw.js": "^2.0.3",
     "svg.js": "^2.7.1",
+    "svg.select.js": "^3.0.1",
     "vue": "^2.5.16",
     "vue-electron": "^1.0.6",
     "vue-router": "^3.0.1",

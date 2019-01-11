@@ -8,9 +8,11 @@ var imgDir = path.join(__dirname, '../../../../imgs/')
 if (process.env.NODE_ENV === 'production') {
   imgDir = path.join(process.resourcesPath, '../imgs/')
 }
-fs.access(imgDir, fs.constants.F_OK, (err) => {
-  if (err) fs.mkdirSync(imgDir)
-})
+try {
+  fs.accessSync(imgDir, fs.constants.F_OK)
+} catch (error) {
+  fs.mkdirSync(imgDir)
+}
 function _createImage (filename, svg) {
   var baseName = path.win32.basename(filename)
   var filePath = imgDir + path.sep + baseName

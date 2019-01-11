@@ -23,20 +23,21 @@ function createWindow () {
   const winConfig = {
     height: size.height,
     useContentSize: true,
-    width: size.width
+    width: size.width,
+    frame: true
   }
   mainWindow = new BrowserWindow(winConfig)
   mainWindow.loadURL(winURL)
   // 最大化
   mainWindow.maximize()
-  mainWindow.on('closed', () => {
+  mainWindow.on('closed', (e) => {
     mainWindow = null
   })
 }
 
 app.on('ready', createWindow)
 
-app.on('window-all-closed', () => {
+app.on('window-all-closed', (e) => {
   if (process.platform !== 'darwin') {
     app.quit()
   }
@@ -47,7 +48,6 @@ app.on('activate', () => {
     createWindow()
   }
 })
-
 /**
  * Auto Updater
  *

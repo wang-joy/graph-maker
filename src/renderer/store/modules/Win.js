@@ -1,4 +1,5 @@
 import types from '../mutations-type'
+import {remote} from 'electron'
 const state = {
   minWinWidth: 1200,
   minWinHeight: 800,
@@ -26,11 +27,18 @@ const mutations = {
   },
   [types.SET_RIGHTER_WIDTH] (state, w) {
     state.righterWidth = w
+  },
+  [types.WIN_QUIT] (state) {
+    remote.getCurrentWindow().close()
   }
 }
 const actions = {
   winResize (context, size) {
     context.commit(types.WIN_RESIZE, size)
+  },
+  winQuit ({commit}) {
+    commit(types.SET_FILE_HISTORY)
+    commit(types.WIN_QUIT)
   }
 }
 const getters = {

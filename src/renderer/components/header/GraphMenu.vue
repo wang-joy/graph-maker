@@ -18,24 +18,34 @@
 </template>
 
 <script>
+import {mapState} from 'vuex'
+import SvgManager from '@/svg/manager/svg-manager'
 export default {
   data () {
     return {
       menus: [
         {
-          title: '文件',
+          title: '文件(E)',
           items: [
             {
-              title: '新建',
+              title: '新建 Ctrl+N',
               handler: this.create
             },
             {
-              title: '保存',
-              handler: this.create
+              title: '打开 Ctrl+O',
+              handler: this.open
             },
             {
-              title: '打开',
-              handler: this.create
+              title: '保存 Ctrl+S',
+              handler: this.save
+            },
+            {
+              title: '另存为 Shift+Ctrl+S',
+              handler: this.saveAs
+            },
+            {
+              title: '退出 Ctrl+Q',
+              handler: this.quit
             }
           ]
         }
@@ -45,7 +55,24 @@ export default {
   methods: {
     create () {
       this.$store.dispatch('createSvg')
+    },
+    save () {
+      this.$store.dispatch('saveSvg')
+    },
+    saveAs () {
+      this.$store.dispatch('saveAsSvg')
+    },
+    quit () {
+      this.$store.dispatch('winQuit')
+    },
+    open () {
+      this.$store.dispatch('openSvg')
     }
+  },
+  computed: {
+    ...mapState({
+      svg: state => SvgManager.getById(state.active)
+    })
   }
 }
 </script>

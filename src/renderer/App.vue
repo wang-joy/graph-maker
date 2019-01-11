@@ -2,6 +2,7 @@
   <div id="app">
     <router-view></router-view>
     <div id="graph-mask"></div>
+    <div id="graph-svg"></div>
   </div>
 </template>
 
@@ -37,5 +38,13 @@
   width: 100%;
   z-index: 2;
   cursor: crosshair;
+}
+#graph-svg{
+  position: absolute;
+  left: -1000px;
+  top: -1000px;
+  width: 100px;
+  height: 100px;
+  overflow: hidden;
 }
 </style>

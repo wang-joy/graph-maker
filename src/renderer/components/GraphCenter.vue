@@ -6,7 +6,7 @@
         :name="item.name"
         :label="item.label"
         :key="item.name"
-        class="my-tab-pane">
+        class="my-tab-pane" lazy>
         <graph-work-area :id="item.name"></graph-work-area>
       </el-tab-pane>
     </el-tabs>
@@ -42,7 +42,6 @@ export default {
       remove: 'removeSvg'
     }),
     click () {
-      console.log(event)
     }
   }
 

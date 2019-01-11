@@ -7,6 +7,7 @@ import store from './store'
 import ElementUI from 'element-ui'
 import './assets/css/reset.css'
 import 'element-ui/lib/theme-chalk/index.css'
+import '@/svg/evts/WinEvts'
 if (!process.env.IS_WEB) Vue.use(require('vue-electron'))
 Vue.http = Vue.prototype.$http = axios
 Vue.config.productionTip = false
@@ -16,5 +17,8 @@ new Vue({
   components: { App },
   router,
   store,
-  template: '<App/>'
+  template: '<App/>',
+  mounted () {
+    this.$store.dispatch('initList')
+  }
 }).$mount('#app')

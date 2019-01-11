@@ -1,5 +1,8 @@
 import types from './mutations-type'
 import SvgManager from '@/svg/manager/svg-manager'
+import settings from 'electron-settings'
+import path from 'path'
+import GraphSvg from '@/svg/GraphSvg'
 const mutations = {
   [types.CREATE_SVG] (state, id) {
     SvgManager.create(id)
@@ -27,6 +30,55 @@ const mutations = {
       })
     }
     state.list = list.filter(el => el.name !== id)
+  },
+  [types.SAVE_SVG] (state, id) {
+    if (typeof id === 'undefined') {
+      id = state.active
+    }
+    let svg = SvgManager.getById(id)
+    svg.save()
+    let tab = state.list.find(el => el.name === id)
+    let index = state.list.indexOf(tab)
+    tab.label = svg.label
+    tab.filePath = svg.filePath
+    state.list.splice(index, 1, tab)
+  },
+  [types.SAVE_AS_SVG] (state) {
+    let id = state.active
+    let svg = SvgManager.getById(id)
+    svg.saveAs()
+    let tab = state.list.find(el => el.name === id)
+    let index = state.list.indexOf(tab)
+    tab.label = svg.label
+    tab.filePath = svg.filePath
+    state.list.splice(index, 1, tab)
+  },
+  [types.INIT] (state, list) {
+    state.list = list
+  },
+  [types.SET_FILE_HISTORY] (state) {
+    let svgs = SvgManager.svgs
+    let files = []
+    svgs.forEach(svg => {
+      if (confirm(`是否保存${svg.label}`)) {
+        svg.save()
+      }
+      let path = svg.path
+      if (path) {
+        files.push(path)
+      }
+    })
+    settings.set('svgs', files)
+  },
+  [types.OPEN_SVG] (state, {file, id}) {
+    let svg = new GraphSvg(id, file)
+    SvgManager.svgs.push(svg)
+    let tab = {
+      label: path.basename(file, path.extname(file)),
+      name: svg.id,
+      filePath: file
+    }
+    state.list.push(tab)
   }
 }
 export default mutations

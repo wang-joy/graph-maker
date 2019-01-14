@@ -79,6 +79,12 @@ const mutations = {
       filePath: file
     }
     state.list.push(tab)
+  },
+  [types.REDO] (state, svg) {
+    svg.redo()
+  },
+  [types.UNDO] (state, svg) {
+    svg.undo()
   }
 }
 export default mutations

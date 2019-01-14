@@ -35,7 +35,7 @@ export default {
       }
     })
   },
-  openSvg ({commit, getters}) {
+  openSvg ({commit, getters, rootState}) {
     let opts = {
       title: '打开',
       filters: [ { name: 'svg', extensions: ['svg'] } ],
@@ -44,7 +44,8 @@ export default {
     let fileNames = remote.dialog.showOpenDialog(opts)
     if (fileNames) {
       fileNames.forEach(file => {
-        let tab = getters.getTabByFileName(file)
+        console.log(rootState.list)
+        let tab = rootState.list.find(el => el.filePath === file)
         if (!tab) {
           let id = getters.id
           commit(types.OPEN_SVG, {file: file, id: id})
@@ -55,5 +56,13 @@ export default {
         }
       })
     }
+  },
+  redo ({commit, getters}) {
+    let svg = getters.svg
+    commit(types.REDO, svg)
+  },
+  undo ({commit, getters}) {
+    let svg = getters.svg
+    commit(types.UNDO, svg)
   }
 }

@@ -97,7 +97,7 @@ export default {
             draw.remember('_type', type)
           } else {
             let shape = shapes[type]()
-            draw.add(shape)
+            this.svg.addShape(shape)
             shape.loaded(ShapeEvts.imgLoaded)
             ShapeUtils.init(shape, type)
           }

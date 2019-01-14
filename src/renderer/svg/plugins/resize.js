@@ -90,7 +90,9 @@ ResizeHandler.prototype.resize = function (event) {
     box: this.el.bbox(), // The bounding-box of the element
     rotation: this.el.transform().rotation, // The current rotation of the element
     scaleX: scaleX,
-    scaleY: scaleY
+    scaleY: scaleY,
+    transform: this.el.transform(),
+    array: this.el.array ?  this.el.array().valueOf() : []
   }
 
   // Add font-size parameter if the element type is text
@@ -431,7 +433,7 @@ ResizeHandler.prototype.done = function () {
   SVG.off(window, 'mouseup.resize')
   SVG.off(window, 'touchmove.resize')
   SVG.off(window, 'touchend.resize')
-  this.el.fire('resizedone')
+  this.el.fire('resizedone',{handler: this})
 }
 
 // The flag is used to determine whether the resizing is used with a left-Point (first bit) and top-point (second bit)

@@ -16,5 +16,7 @@ export default {
   INIT: 'INIT',
   WIN_QUIT: 'WIN_QUIT',
   SET_FILE_HISTORY: 'SET_FILE_HISTORY',
-  OPEN_SVG: 'OPEN_SVG'
+  OPEN_SVG: 'OPEN_SVG',
+  REDO: 'REDO',
+  UNDO: 'UNDO'
 }

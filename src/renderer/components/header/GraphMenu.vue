@@ -1,6 +1,6 @@
 <template>
   <div class="graph-menu">
-    <el-dropdown v-for="(menu, index) in menus" :key="index">
+    <el-dropdown v-for="(menu, index) in menus" :key="index" placement='top-start'>
       <span class="graph-dropdown-link">
         {{menu.title}}<i class="el-icon-caret-bottom el-icon--right"></i>
       </span>
@@ -9,8 +9,9 @@
           v-for="(item, i) in menu.items"
           class="my-dropdown-item"
           :key="i"
-          @click.native="item.handler">
-          {{item.title}}
+          @click.native="item.handler" :divided="item.divided">
+          <span class="item-title">{{item.title}} </span>
+          <span class="item-accesskey">{{item.accesskey}} </span>
         </el-dropdown-item>
       </el-dropdown-menu>
     </el-dropdown>
@@ -28,24 +29,76 @@ export default {
           title: '文件(E)',
           items: [
             {
-              title: '新建 Ctrl+N',
-              handler: this.create
+              title: '新建',
+              handler: this.create,
+              accesskey: 'Ctrl+N'
             },
             {
-              title: '打开 Ctrl+O',
-              handler: this.open
+              title: '打开',
+              handler: this.open,
+              accesskey: 'Ctrl+O'
             },
             {
-              title: '保存 Ctrl+S',
-              handler: this.save
+              title: '保存',
+              handler: this.save,
+              accesskey: 'Ctrl+S'
             },
             {
-              title: '另存为 Shift+Ctrl+S',
-              handler: this.saveAs
+              title: '另存为',
+              handler: this.saveAs,
+              accesskey: 'Shift+Ctrl+S'
             },
             {
-              title: '退出 Ctrl+Q',
-              handler: this.quit
+              title: '退出',
+              handler: this.quit,
+              accesskey: 'Ctrl+Q'
+            }
+          ]
+        },
+        {
+          title: '编辑(E)',
+          items: [
+            {
+              title: '撤销',
+              handler: this.undo,
+              accesskey: 'Ctrl+Z'
+            },
+            {
+              title: '恢复',
+              handler: this.redo,
+              accesskey: 'Ctrl+Shift+Z'
+            },
+            {
+              title: '剪切',
+              handler: this.create,
+              accesskey: 'Ctrl+X',
+              divided: true
+            },
+            {
+              title: '复制',
+              handler: this.create,
+              accesskey: 'Ctrl+C'
+            },
+            {
+              title: '粘贴',
+              handler: this.create,
+              accesskey: 'Ctrl+V'
+            },
+            {
+              title: '删除',
+              handler: this.create,
+              accesskey: 'Del'
+            },
+            {
+              title: '全选',
+              handler: this.create,
+              accesskey: 'Ctrl+A',
+              divided: true
+            },
+            {
+              title: '反选',
+              handler: this.create,
+              accesskey: ''
             }
           ]
         }
@@ -62,11 +115,17 @@ export default {
     saveAs () {
       this.$store.dispatch('saveAsSvg')
     },
+    open () {
+      this.$store.dispatch('openSvg')
+    },
     quit () {
       this.$store.dispatch('winQuit')
     },
-    open () {
-      this.$store.dispatch('openSvg')
+    undo () {
+      this.$store.dispatch('undo')
+    },
+    redo () {
+      this.$store.dispatch('redo')
     }
   },
   computed: {
@@ -100,4 +159,16 @@ export default {
   font-size: 12px;
   font-family: '微软雅黑',sans-serif;
 }
+.my-dropdown-item .item-title, .my-dropdown-item .item-accesskey{
+  display: inline-block;
+  height: 100%;
+  line-height: 100%;
+  width: 50px;
+}
+ .my-dropdown-item .item-accesskey{
+   vertical-align: baseline;
+   margin-left: 5px;
+   text-align: right;
+   width: 70px;
+ }
 </style>

@@ -29,5 +29,9 @@ class Selector {
       this.shapes.push(el)
     })
   }
+  unselect (shape) {
+    shape.selectize(false, {deepSelect: ShapeUtils.deepSelect(shape)})
+    this.shapes = this.shapes.filter(el => el !== shape)
+  }
 }
 export default Selector

@@ -7,10 +7,14 @@ import fs from 'fs'
 import path from 'path'
 import SVG from 'svg.js'
 import shapes from '@/svg/shape/index'
+import ShapeManager from '@/svg/manager/ShapeManager'
+import CommandManager from '@/svg/command/CommandManager'
+import AddCommand from '@/svg/command/AddCommand'
 // import ShapeEvts from '@/svg/evts/ShapeEvts'
 export default class GraphSvg {
   children = []
   selector = new Selector()
+  shapeManager = new ShapeManager(this)
   width = 12000
   height = 12000
   gridShow = true
@@ -21,6 +25,7 @@ export default class GraphSvg {
   cursor = new Cursor(0, 0)
   label = 'New File'
   filePath
+  commandManager = new CommandManager()
   constructor (id, filePath = null) {
     this.id = id
     this.filePath = filePath
@@ -43,13 +48,14 @@ export default class GraphSvg {
     this.draw.on(evtName, evt)
   }
   addShape (shape) {
-    this.children.push(shape)
+    let addCommand = new AddCommand(this, shape)
+    this.commandManager.execute(addCommand)
   }
   removeShape (shape) {
     this.children = this.children.filter(el => el !== shape)
   }
   getChildren () {
-    return this.children
+    return this.shapeManager.shapes
   }
   saveAs () {
     let opts = {
@@ -75,7 +81,7 @@ export default class GraphSvg {
   }
   __writeFile (fileName) {
     if (fileName) {
-      let children = this.children
+      let children = this.shapeManager.shapes
       let svgContent = `<svg xmlns="http://www.w3.org/2000/svg" version="1.1" xmlns:xlink="http://www.w3.org/1999/xlink" style="background-color:${this.backgroundColor}" viewBox="0.000000 0.000000 ${this.width} ${this.height}" width="${this.width}" height="${this.height}">\n`
       children.forEach(el => {
         svgContent += `\t${el.svg()}\n`
@@ -86,7 +92,7 @@ export default class GraphSvg {
       svgContent += '</svg>'
       try {
         fs.writeFileSync(fileName, svgContent, 'utf-8')
-        this.path = fileName
+        this.filePath = fileName
         this.label = path.basename(fileName, path.extname(fileName))
         this.isNew = false
       } catch (error) {
@@ -123,20 +129,27 @@ export default class GraphSvg {
       let attr = ShapeUtils.getElementAttrs(e)
       let shape = new SVG.Element()
       if (type === 'image') {
-        shape = this.draw.image(attr['href'] || attr['xlink:href'])
-        shape.attr(attr)
+        shape = SVG.image(attr['href'] || attr['xlink:href'])
+        this.shapeManager.add(shape)
+        shape.attr(attr).load(attr['href'] || attr['xlink:href'])
         ShapeUtils.loadImage(shape, this.filePath)
       } else {
         shape = shapes[type]()
         shape.attr(attr)
-        this.draw.add(shape)
+        // this.draw.add(shape)
+        this.shapeManager.add(shape)
       }
       ShapeUtils.load(shape)
       shape.fire('drawstop')
-      this.children.push(shape)
     })
   }
   getShapeById (id) {
-    return this.children.find(el => el.attr('id') === id)
+    return this.shapeManager.getShapeById(id)
+  }
+  redo () {
+    this.commandManager.redo()
+  }
+  undo () {
+    this.commandManager.undo()
   }
 }

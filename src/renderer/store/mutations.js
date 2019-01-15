@@ -36,22 +36,26 @@ const mutations = {
       id = state.active
     }
     let svg = SvgManager.getById(id)
-    svg.save()
-    let tab = state.list.find(el => el.name === id)
-    let index = state.list.indexOf(tab)
-    tab.label = svg.label
-    tab.filePath = svg.filePath
-    state.list.splice(index, 1, tab)
+    if (svg) {
+      svg.save()
+      let tab = state.list.find(el => el.name === id)
+      let index = state.list.indexOf(tab)
+      tab.label = svg.label
+      tab.filePath = svg.filePath
+      state.list.splice(index, 1, tab)
+    }
   },
   [types.SAVE_AS_SVG] (state) {
     let id = state.active
     let svg = SvgManager.getById(id)
-    svg.saveAs()
-    let tab = state.list.find(el => el.name === id)
-    let index = state.list.indexOf(tab)
-    tab.label = svg.label
-    tab.filePath = svg.filePath
-    state.list.splice(index, 1, tab)
+    if (svg) {
+      svg.saveAs()
+      let tab = state.list.find(el => el.name === id)
+      let index = state.list.indexOf(tab)
+      tab.label = svg.label
+      tab.filePath = svg.filePath
+      state.list.splice(index, 1, tab)
+    }
   },
   [types.INIT] (state, list) {
     state.list = list
@@ -63,9 +67,9 @@ const mutations = {
       if (confirm(`是否保存${svg.label}`)) {
         svg.save()
       }
-      let path = svg.path
+      let filePath = svg.filePath
       if (path) {
-        files.push(path)
+        files.push(filePath)
       }
     })
     settings.set('svgs', files)
@@ -85,6 +89,24 @@ const mutations = {
   },
   [types.UNDO] (state, svg) {
     svg.undo()
+  },
+  [types.COPY] (state, svg) {
+    svg.copy()
+  },
+  [types.CUTE] (state, svg) {
+    svg.cute()
+  },
+  [types.PASTE] (state, svg) {
+    svg.paste()
+  },
+  [types.REMOVE_SHAPES] (state, svg) {
+    svg.removeShapes()
+  },
+  [types.SELECT_ALL] (state, svg) {
+    svg.selectAll()
+  },
+  [types.INVERT_SELECT] (state, svg) {
+    svg.invertSelect()
   }
 }
 export default mutations

@@ -10,10 +10,13 @@ const mousedown = function (e) {
   const mode = draw.remember('_mode')
   if (mode === 'select' && e.button === 0) {
     const svg = draw.remember('_svg')
-    const selector = svg.selector
-    selector.select(this)
-    this.draggable()
-    e.stopPropagation()
+    let multiSelect = this.remember('multiSelect')
+    if (!multiSelect) {
+      const selector = svg.selector
+      selector.select(this)
+      this.draggable()
+      e.stopPropagation()
+    }
   } else if (mode === 'drawstart' && e.button === 0) {
     this.draggable(false)
   }
@@ -50,9 +53,11 @@ const dragend = function ({detail}) {
   let endPoint = detail.p
   let startBox = detail.handler.startPoints.box
   let endBox = detail.handler.getBBox()
-  let commandManager = ShapeUtils.getSvg(this).commandManager
-  let command = new MoveCommand(this, startPoint, endPoint, startBox, endBox)
-  commandManager.execute(command)
+  if (startPoint.x - endPoint.x !== 0 && startPoint.y - endPoint.y !== 0) {
+    let commandManager = ShapeUtils.getSvg(this).commandManager
+    let command = new MoveCommand(this, startPoint, endPoint, startBox, endBox)
+    commandManager.execute(command)
+  }
 }
 const resizedone = function ({detail}) {
   let parameters = detail.handler.parameters
@@ -78,6 +83,26 @@ const resizedone = function ({detail}) {
   let cmd = new ResizeCommand(this, start, end)
   commandManager.execute(cmd)
 }
+const beforedrag = function (e) {
+  const shapes = ShapeUtils.getSvg(this).selector.shapes
+  const startBoxs = shapes.map(item => ShapeUtils.getBBox(item))
+  e.detail.handler.startBoxs = startBoxs
+}
+const dragmove = function (e) {
+  let startPoint = e.detail.handler.startPoints.point
+  const startBoxs = e.detail.handler.startBoxs
+  let p = e.detail.p
+  const shapes = ShapeUtils.getSvg(this).selector.shapes
+  startPoint = startPoint.matrixTransform(this.node.getScreenCTM())
+  p = p.matrixTransform(this.node.getScreenCTM())
+  shapes.forEach((item, i) => {
+    let newstartPoint = startPoint.matrixTransform(item.node.getScreenCTM().inverse())
+    let newp = p.matrixTransform(item.node.getScreenCTM().inverse())
+    let x = startBoxs[i].x + newp.x - newstartPoint.x
+    let y = startBoxs[i].y + newp.y - newstartPoint.y
+    item.move(x, y)
+  })
+}
 export default {
   mousedown,
   select,
@@ -85,5 +110,7 @@ export default {
   drawstop,
   imgLoaded,
   dragend,
-  resizedone
+  resizedone,
+  dragmove,
+  beforedrag
 }

@@ -23,6 +23,7 @@ export default {
   },
   initList ({commit, getters}) {
     let files = settings.get('svgs') || []
+    console.log(files)
     files.forEach(file => {
       try {
         fs.openSync(file, fs.constants.F_OK)
@@ -44,7 +45,6 @@ export default {
     let fileNames = remote.dialog.showOpenDialog(opts)
     if (fileNames) {
       fileNames.forEach(file => {
-        console.log(rootState.list)
         let tab = rootState.list.find(el => el.filePath === file)
         if (!tab) {
           let id = getters.id
@@ -59,10 +59,50 @@ export default {
   },
   redo ({commit, getters}) {
     let svg = getters.svg
-    commit(types.REDO, svg)
+    if (svg) {
+      commit(types.REDO, svg)
+    }
   },
   undo ({commit, getters}) {
     let svg = getters.svg
-    commit(types.UNDO, svg)
+    if (svg) {
+      commit(types.UNDO, svg)
+    }
+  },
+  copy ({commit, getters}) {
+    let svg = getters.svg
+    if (svg) {
+      commit(types.COPY, svg)
+    }
+  },
+  cute ({commit, getters}) {
+    let svg = getters.svg
+    if (svg) {
+      commit(types.CUTE, svg)
+    }
+  },
+  paste ({commit, getters}) {
+    let svg = getters.svg
+    if (svg) {
+      commit(types.PASTE, svg)
+    }
+  },
+  remove ({commit, getters}) {
+    let svg = getters.svg
+    if (svg) {
+      commit(types.REMOVE_SHAPES, svg)
+    }
+  },
+  selectAll ({commit, getters, rootState}) {
+    let svg = getters.svg
+    if (svg) {
+      commit(types.SELECT_ALL, svg)
+    }
+  },
+  invertSelect ({commit, getters}) {
+    let svg = getters.svg
+    if (svg) {
+      commit(types.INVERT_SELECT, svg)
+    }
   }
 }

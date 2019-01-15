@@ -15,20 +15,25 @@ export default {
   getSvg (shape) {
     return shape.doc().remember('_svg')
   },
-  init (shape, type) {
+  init (shape, svg) {
     for (const key in ShapeEvts) {
       if (ShapeEvts.hasOwnProperty(key)) {
         const evt = ShapeEvts[key]
         shape.on(key, evt)
       }
     }
-    let svg = this.getSvg(shape)
+  },
+  getNextId (type, svg) {
     let n = 0
     let id = type + n
     while (svg.getShapeById(id)) {
       id = type + ++n
     }
-    shape.attr('id', id).attr('type', type)
+    return id
+  },
+  setShapeId (shape, svg) {
+    let type = shape.attr('type') || shape.type
+    shape.attr('id', this.getNextId(type, svg))
   },
   getElementType (el) {
     let attrs = this.getElementAttrs(el)
@@ -75,5 +80,10 @@ export default {
     let src = fileDir + path.sep + href
     let desc = imgDir + path.sep + imgName
     fs.copyFileSync(src, desc)
+  },
+  clone (shape) {
+  },
+  getBBox (shape) {
+    return shape.bbox()
   }
 }

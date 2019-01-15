@@ -38,9 +38,10 @@ function __drawstart (parent, e) {
   GraphMask.show()
   parent.remember('_mode', 'drawing')
   // parent.add(shape)
+  shape.attr('type', type)
   let svg = parent.remember('_svg')
-  svg.addShape(shape)
-  ShapeUtils.init(shape, type)
+  svg.addShapes([shape])
+  ShapeUtils.setShapeId(shape, svg)
   shape.draw(e)
   GraphMask.on('mousedown.drawend', function (e) { __drawend(e, shape) })
 }

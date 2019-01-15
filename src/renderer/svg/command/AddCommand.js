@@ -1,17 +1,21 @@
 import Command from './Command'
+import ShapeUtils from '@/svg/utils/shape'
 class AddCommand extends Command {
-  constructor (svg, shape) {
+  constructor (svg, shapes) {
     super(svg)
-    this.shape = shape
-    this.selector = svg.selector
-    this.shapeManager = svg.shapeManager
+    this.shapes = shapes
   }
 
   execute () {
-    this.shapeManager.add(this.shape)
+    this.shapes.forEach(item => {
+      ShapeUtils.setShapeId(item, this.svg)
+      this.svg.shapeManager.add(item)
+    })
   }
   undo () {
-    this.shapeManager.remove(this.shape)
+    this.shapes.forEach(item => {
+      this.svg.shapeManager.remove(item)
+    })
   }
 }
 export default AddCommand

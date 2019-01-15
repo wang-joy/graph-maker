@@ -6,13 +6,10 @@ class Selector {
     this.shapes = []
   }
   select (shape) {
-    let multiSelected = shape.remember('multiSelect')
-    if (!multiSelected) {
-      this.clear()
-      shape.selectize(true, {deepSelect: ShapeUtils.deepSelect(shape)})
-      shape.fire('select')
-      this.shapes.push(shape)
-    }
+    this.clear()
+    shape.selectize(true, {deepSelect: ShapeUtils.deepSelect(shape)})
+    shape.fire('select')
+    this.shapes.push(shape)
   }
   clear () {
     this.shapes.forEach(el => {

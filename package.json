@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "author": "wang-joy <wang_joy13@163.com>",
   "description": "sv编辑器",
-  "license": null,
+  "license": "",
   "main": "./dist/electron/main.js",
   "scripts": {
     "build": "node .electron-vue/build.js && electron-builder",
@@ -63,7 +63,8 @@
     "vue": "^2.5.16",
     "vue-electron": "^1.0.6",
     "vue-router": "^3.0.1",
-    "vuex": "^3.0.1"
+    "vuex": "^3.0.1",
+    "jquery": "^2.2.1"
   },
   "devDependencies": {
     "ajv": "^6.5.0",

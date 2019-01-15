@@ -1,3 +1,6 @@
+import ShapeUtils from '@/svg/utils/shape'
+import 'svg.draggable.js'
+import '@/svg/plugins/resize'
 class ShapeManager {
   shapes = []
   constructor (svg) {
@@ -5,7 +8,9 @@ class ShapeManager {
   }
   add (shape) {
     const draw = this.svg.draw
+    ShapeUtils.init(shape, this.svg)
     draw.add(shape)
+    shape.draggable().resize()
     this.shapes.push(shape)
   }
   remove (shape) {
@@ -13,7 +18,7 @@ class ShapeManager {
     // const draw = this.svg.draw
     selector.unselect(shape)
     shape.remove()
-    this.shapes = this.shapes
+    this.shapes = this.shapes.filter(el => el !== shape)
   }
   getShapeById (id) {
     return this.shapes.find(el => el.attr('id') === id)

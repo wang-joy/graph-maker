@@ -10,6 +10,8 @@ import shapes from '@/svg/shape/index'
 import ShapeManager from '@/svg/manager/ShapeManager'
 import CommandManager from '@/svg/command/CommandManager'
 import AddCommand from '@/svg/command/AddCommand'
+import CopyManager from '@/svg/manager/CopyManager'
+import DelCommand from '@/svg/command/DelCommand'
 // import ShapeEvts from '@/svg/evts/ShapeEvts'
 export default class GraphSvg {
   children = []
@@ -47,12 +49,14 @@ export default class GraphSvg {
   on (evtName, evt) {
     this.draw.on(evtName, evt)
   }
-  addShape (shape) {
-    let addCommand = new AddCommand(this, shape)
+  addShapes (shapes) {
+    let addCommand = new AddCommand(this, shapes)
     this.commandManager.execute(addCommand)
   }
-  removeShape (shape) {
-    this.children = this.children.filter(el => el !== shape)
+  removeShapes (shapes) {
+    let removeShapes = shapes || this.selector.shapes
+    let cmd = new DelCommand(this, removeShapes)
+    this.commandManager.execute(cmd)
   }
   getChildren () {
     return this.shapeManager.shapes
@@ -151,5 +155,34 @@ export default class GraphSvg {
   }
   undo () {
     this.commandManager.undo()
+  }
+  copy () {
+    let shapes = this.selector.shapes
+    CopyManager.copy(shapes)
+  }
+  cute () {
+    let shapes = this.selector.shapes
+    CopyManager.cute(shapes, this)
+  }
+  paste () {
+    CopyManager.paste(this)
+  }
+  selectAll () {
+    let shapes = this.shapeManager.shapes
+    if (shapes.length === 1) {
+      this.selector.select(shapes[0])
+    } else if (shapes.length > 1) {
+      this.selector.multiSelect(shapes)
+    }
+  }
+  invertSelect () {
+    let shapes = this.shapeManager.shapes.filter(el => !this.selector.shapes.find(item => item === el))
+    if (shapes.length === 0) {
+      this.selector.clear()
+    } else if (shapes.length === 1) {
+      this.selector.select(shapes[0])
+    } else if (shapes.length > 1) {
+      this.selector.multiSelect(shapes)
+    }
   }
 }

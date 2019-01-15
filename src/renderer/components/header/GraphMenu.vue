@@ -70,35 +70,35 @@ export default {
             },
             {
               title: '剪切',
-              handler: this.create,
+              handler: this.cute,
               accesskey: 'Ctrl+X',
               divided: true
             },
             {
               title: '复制',
-              handler: this.create,
+              handler: this.copy,
               accesskey: 'Ctrl+C'
             },
             {
               title: '粘贴',
-              handler: this.create,
+              handler: this.paste,
               accesskey: 'Ctrl+V'
             },
             {
               title: '删除',
-              handler: this.create,
+              handler: this.remove,
               accesskey: 'Del'
             },
             {
               title: '全选',
-              handler: this.create,
+              handler: this.selectAll,
               accesskey: 'Ctrl+A',
               divided: true
             },
             {
               title: '反选',
-              handler: this.create,
-              accesskey: ''
+              handler: this.invertSelect,
+              accesskey: 'Ctrl+I'
             }
           ]
         }
@@ -126,6 +126,24 @@ export default {
     },
     redo () {
       this.$store.dispatch('redo')
+    },
+    cute () {
+      this.$store.dispatch('cute')
+    },
+    copy () {
+      this.$store.dispatch('copy')
+    },
+    paste () {
+      this.$store.dispatch('paste')
+    },
+    remove () {
+      this.$store.dispatch('remove')
+    },
+    selectAll () {
+      this.$store.dispatch('selectAll')
+    },
+    invertSelect () {
+      this.$store.dispatch('invertSelect')
     }
   },
   computed: {

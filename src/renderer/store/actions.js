@@ -23,7 +23,6 @@ export default {
   },
   initList ({commit, getters}) {
     let files = settings.get('svgs') || []
-    console.log(files)
     files.forEach(file => {
       try {
         fs.openSync(file, fs.constants.F_OK)

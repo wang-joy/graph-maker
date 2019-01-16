@@ -23,7 +23,7 @@ export default class GraphSvg {
   gridColor = '#CCCCCC'
   backgroundColor = '#FFFFFF'
   isNew = true
-  isChange = false
+  isChange = true
   cursor = new Cursor(0, 0)
   label = 'New File'
   filePath

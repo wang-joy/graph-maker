@@ -51,11 +51,15 @@ const imgLoaded = function () {
 const dragend = function ({detail}) {
   let startPoint = detail.handler.startPoints.point
   let endPoint = detail.p
-  let startBox = detail.handler.startPoints.box
-  let endBox = detail.handler.getBBox()
+  let startBoxs = detail.handler.startBoxs
   if (startPoint.x - endPoint.x !== 0 && startPoint.y - endPoint.y !== 0) {
-    let commandManager = ShapeUtils.getSvg(this).commandManager
-    let command = new MoveCommand(this, startPoint, endPoint, startBox, endBox)
+    let m = this.node.getScreenCTM()
+    startPoint = startPoint.matrixTransform(m)
+    endPoint = endPoint.matrixTransform(m)
+    let svg = ShapeUtils.getSvg(this)
+    let commandManager = svg.commandManager
+    let shapes = svg.selector.shapes
+    let command = new MoveCommand(shapes, startPoint, endPoint, startBoxs)
     commandManager.execute(command)
   }
 }

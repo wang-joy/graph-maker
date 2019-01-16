@@ -1,22 +1,31 @@
 import Command from './Command'
 class MoveCommand extends Command {
-  constructor (shape, startPoint, endPoint, startBox, endBox) {
+  constructor (shapes, startPoint, endPoint, startBoxs) {
     super()
-    this.shape = shape
+    this.shapes = shapes
     this.startPoint = startPoint
     this.endPoint = endPoint
-    this.startBox = startBox
-    this.endBox = endBox
+    this.startBoxs = startBoxs
   }
   execute () {
-    let x = this.startBox.x + this.endPoint.x - this.startPoint.x
-    let y = this.startBox.y + this.endPoint.y - this.startPoint.y
-    this.shape.move(x, y)
+    this.shapes.forEach((element, i) => {
+      const m = element.node.getScreenCTM().inverse()
+      const newStartPoint = this.startPoint.matrixTransform(m)
+      const newEndPoint = this.endPoint.matrixTransform(m)
+      let x = this.startBoxs[i].x + newEndPoint.x - newStartPoint.x
+      let y = this.startBoxs[i].y + newEndPoint.y - newStartPoint.y
+      element.move(x, y)
+    })
   }
   undo () {
-    let x = this.endBox.x + this.startPoint.x - this.endPoint.x
-    let y = this.endBox.y + this.startPoint.y - this.endPoint.y
-    this.shape.move(x, y)
+    this.shapes.forEach((element, i) => {
+      const m = element.node.getScreenCTM().inverse()
+      const newStartPoint = this.startPoint.matrixTransform(m)
+      const newEndPoint = this.endPoint.matrixTransform(m)
+      let x = this.startBoxs[i].x + newStartPoint.x - newEndPoint.x
+      let y = this.startBoxs[i].y + newStartPoint.y - newEndPoint.y
+      element.move(x, y)
+    })
   }
 }
 export default MoveCommand

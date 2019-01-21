@@ -1,0 +1,86 @@
+.el-menu{
+  background-color: transparent;
+}
+.el-menu.el-menu--horizontal{
+  border-bottom: none;
+}
+.el-menu--horizontal>.el-submenu .el-submenu__title{
+  height: 32px;
+  line-height: 32px;
+  border-bottom: none;
+  color: black;
+  font-size: 13px;
+  padding:0 10px 0 5px;
+  font-family: '微软雅黑', sans-serif;
+}
+.el-menu--horizontal>.el-submenu:hover .el-submenu__title {
+  color: aliceblue;
+  background-color: #409EFF;
+}
+.el-submenu__title i{
+  color: inherit;
+}
+.el-menu--popup{
+  padding: 5px 0;
+  margin-top: 0;
+  min-width: 120px;
+  background-color: #fff;
+}
+.first{
+  margin-left: 5px;
+}
+.el-menu--horizontal .el-menu .el-menu-item{
+  font-family: '微软雅黑', sans-serif;
+  height: 32px;
+  line-height: 32px;
+  font-size: 13px;
+  color: #303133;
+  padding: 0 20px;
+}
+.el-menu--horizontal .el-menu .el-menu-item:hover{
+  color: aliceblue;
+  background-color: #409EFF;
+}
+.el-menu--horizontal>.el-submenu.is-active .el-submenu__title {
+  border-bottom: none;
+}
+.divided{
+  border-top: 1px solid #DCDFE6;
+}
+.el-menu-item-title{
+  display: inline-block;
+  height: 32px;
+  width: 60px;
+  line-height: 32px;
+}
+.el-menu-item-accesskey{
+  display: inline-block;
+  width: 90px;
+  text-align: right;
+  color: #909399
+}
+.el-menu--horizontal .el-menu .el-menu-item:hover .el-menu-item-accesskey{
+  color: aliceblue;
+}
+.el-menu--horizontal>.el-submenu .el-submenu__icon-arrow{
+  margin-left: 3px;
+}
+.el-menu--horizontal .el-menu--popup .el-submenu .el-submenu__title{
+  font-family: '微软雅黑', sans-serif;
+  height: 32px;
+  line-height: 32px;
+  font-size: 13px;
+  color: #303133;
+  padding: 0 20px;
+}
+.el-menu--horizontal .el-menu--popup .el-submenu .el-submenu__title:hover{
+  color: aliceblue;
+  background-color: #409EFF;
+}
+.el-menu--popup-right-start{
+  margin-left: 1px;
+}
+.el-menu--popup-right-start .el-menu-item{
+  margin-left: 1px;
+  min-width: 150px;
+}

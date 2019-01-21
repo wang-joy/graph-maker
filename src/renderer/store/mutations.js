@@ -107,6 +107,27 @@ const mutations = {
   },
   [types.INVERT_SELECT] (state, svg) {
     svg.invertSelect()
+  },
+  [types.ALIGN_SHAPES] (state, {svg, type}) {
+    svg.alignShapes(type)
+  },
+  [types.FLIP_X] (state, svg) {
+    svg.flipX()
+  },
+  [types.FLIP_Y] (state, svg) {
+    svg.flipY()
+  },
+  [types.ROTATE] (state, {svg, rotation, relative}) {
+    svg.rotate(rotation, relative)
+  },
+  [types.GROUP] (state, svg) {
+    svg.group()
+  },
+  [types.UNGROUP] (state, svg) {
+    svg.ungroup()
+  },
+  [types.ARRANGE] (state, {svg, type}) {
+    svg.arrange(type)
   }
 }
 export default mutations

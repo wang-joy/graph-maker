@@ -12,6 +12,13 @@ import CommandManager from '@/svg/command/CommandManager'
 import AddCommand from '@/svg/command/AddCommand'
 import CopyManager from '@/svg/manager/CopyManager'
 import DelCommand from '@/svg/command/DelCommand'
+import MoveCommand from '@/svg/command/MoveCommand'
+import FilpXCommand from '@/svg/command/FilpXCommand'
+import FilpYCommand from '@/svg/command/FilpYCommand'
+import RotateCommand from '@/svg/command/Rotate'
+import GroupCommand from '@/svg/command/Group'
+import UnGroupCommand from '@/svg/command/UnGroup'
+import ArrangeCommand from '@/svg/command/Arrange'
 // import ShapeEvts from '@/svg/evts/ShapeEvts'
 export default class GraphSvg {
   children = []
@@ -50,13 +57,17 @@ export default class GraphSvg {
     this.draw.on(evtName, evt)
   }
   addShapes (shapes) {
-    let addCommand = new AddCommand(this, shapes)
-    this.commandManager.execute(addCommand)
+    if (shapes && shapes.length > 0) {
+      let addCommand = new AddCommand(this, shapes)
+      this.commandManager.execute(addCommand)
+    }
   }
   removeShapes (shapes) {
     let removeShapes = shapes || this.selector.shapes
-    let cmd = new DelCommand(this, removeShapes)
-    this.commandManager.execute(cmd)
+    if (removeShapes.length > 0) {
+      let cmd = new DelCommand(this, removeShapes)
+      this.commandManager.execute(cmd)
+    }
   }
   getChildren () {
     return this.shapeManager.shapes
@@ -183,6 +194,84 @@ export default class GraphSvg {
       this.selector.select(shapes[0])
     } else if (shapes.length > 1) {
       this.selector.multiSelect(shapes)
+    }
+  }
+  alignShapes (type) {
+    const shapes = this.getSelectedShapes()
+    if (shapes.length > 1) {
+      const startPoints = shapes.map(element => { return {x: ShapeUtils.getBBox(element).x, y: ShapeUtils.getBBox(element).y} })
+      ShapeUtils.align(shapes, type)
+      const endPoints = shapes.map(element => { return {x: ShapeUtils.getBBox(element).x, y: ShapeUtils.getBBox(element).y} })
+      startPoints.some((item, i) => {
+        if (item.x - endPoints[i].x >= 1 || item.y - endPoints[i].y >= 1) {
+          let command = new MoveCommand(shapes, startPoints, endPoints)
+          this.commandManager.execute(command)
+          return true
+        }
+      })
+    }
+  }
+  getSelectedShapes () {
+    return this.selector.shapes
+  }
+  flipX () {
+    if (this.getSelectedShapes().length > 0) {
+      const cmd = new FilpXCommand(this.getSelectedShapes())
+      this.commandManager.execute(cmd)
+    }
+  }
+  flipY () {
+    if (this.getSelectedShapes().length > 0) {
+      const cmd = new FilpYCommand(this.getSelectedShapes())
+      this.commandManager.execute(cmd)
+    }
+  }
+  rotate (rotation, relative) {
+    if (this.getSelectedShapes().length > 0) {
+      const cmd = new RotateCommand(this.getSelectedShapes(), rotation, relative)
+      this.commandManager.execute(cmd)
+    }
+  }
+  group () {
+    if (this.getSelectedShapes().length > 1) {
+      const cmd = new GroupCommand(this.getSelectedShapes(), this)
+      this.commandManager.execute(cmd)
+    }
+  }
+  ungroup () {
+    if (this.getSelectedShapes().length === 1 && ShapeUtils.getShapeType(this.getSelectedShapes()[0]) === 'group') {
+      const cmd = new UnGroupCommand(this.getSelectedShapes()[0], this)
+      this.commandManager.execute(cmd)
+    }
+  }
+  arrange (type) {
+    if (this.getSelectedShapes().length === 1) {
+      let shape = this.getSelectedShapes()[0]
+      let shapes = this.getChildren()
+      let initIndex = shapes.indexOf(shape)
+      let index = initIndex
+      switch (type) {
+        case 'top':
+          index = shapes.length - 1
+          break
+        case 'bottom':
+          index = 0
+          break
+        case 'prev':
+          if (index < shapes.length - 1) {
+            index = initIndex + 1
+          }
+          break
+        case 'next':
+          if (initIndex > 0) {
+            index = initIndex - 1
+          }
+          break
+      }
+      if (index !== initIndex) {
+        const cmd = new ArrangeCommand(shape, index, this.shapeManager)
+        this.commandManager.execute(cmd)
+      }
     }
   }
 }

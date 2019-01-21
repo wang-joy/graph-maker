@@ -49,18 +49,21 @@ const imgLoaded = function () {
   selector.select(this)
 }
 const dragend = function ({detail}) {
+  console.log(detail)
   let startPoint = detail.handler.startPoints.point
   let endPoint = detail.p
-  let startBoxs = detail.handler.startBoxs
-  if (startPoint.x - endPoint.x !== 0 && startPoint.y - endPoint.y !== 0) {
-    let m = this.node.getScreenCTM()
-    startPoint = startPoint.matrixTransform(m)
-    endPoint = endPoint.matrixTransform(m)
-    let svg = ShapeUtils.getSvg(this)
-    let commandManager = svg.commandManager
-    let shapes = svg.selector.shapes
-    let command = new MoveCommand(shapes, startPoint, endPoint, startBoxs)
-    commandManager.execute(command)
+  if (startPoint.x - endPoint.x >= 1 || startPoint.y - endPoint.y >= 0) {
+    const startPoints = detail.handler.startBoxs.map(item => { return {x: item.x, y: item.y} })
+    const svg = ShapeUtils.getSvg(this)
+    const shapes = svg.getSelectedShapes()
+    const endPoints = shapes.map(item => { return {x: ShapeUtils.getBBox(item).x, y: ShapeUtils.getBBox(item).y} })
+    startPoints.some((item, i) => {
+      if (item.x - endPoints[i].x >= 1 || item.y - endPoints[i].y >= 1) {
+        let command = new MoveCommand(shapes, startPoints, endPoints)
+        svg.commandManager.execute(command)
+        return true
+      }
+    })
   }
 }
 const resizedone = function ({detail}) {

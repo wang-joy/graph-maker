@@ -1,32 +1,47 @@
 <template>
   <div class="graph-menu">
-    <el-dropdown v-for="(menu, index) in menus" :key="index" placement='top-start'>
-      <span class="graph-dropdown-link">
-        {{menu.title}}<i class="el-icon-caret-bottom el-icon--right"></i>
-      </span>
-      <el-dropdown-menu slot="dropdown">
-        <el-dropdown-item
-          v-for="(item, i) in menu.items"
-          class="my-dropdown-item"
-          :key="i"
-          @click.native="item.handler" :divided="item.divided">
-          <span class="item-title">{{item.title}} </span>
-          <span class="item-accesskey">{{item.accesskey}} </span>
-        </el-dropdown-item>
-      </el-dropdown-menu>
-    </el-dropdown>
+    <el-menu class="my-el-menu" mode="horizontal" :default-active='activeIndex' menu-trigger='hover' :collapse-transition='false'>
+      <template v-for="(menu, i) in menus">
+        <el-menu-item v-if="!menu.items" :class="[i === 0?'first':'']" :index="''+ i" :key="i">{{menu.title}}</el-menu-item>
+        <el-submenu v-else :key="i" :index="''+ i" :class="['my-el-submenu',i === 0?'first':'']">
+          <template slot="title">{{menu.title}}</template>
+          <template  v-for="(item, j) in menu.items">
+            <el-menu-item v-if="!item.items"
+              :index="i + '-' +j"
+              :key="j"
+              :class="{'my-el-menu-item':true, 'divided': item.divided}" @click.native="item.handler">
+                <span class="el-menu-item-title">{{item.title}}</span>
+                <span class="el-menu-item-accesskey">{{item.accesskey}}</span>
+              </el-menu-item>
+              <el-submenu v-else :key="j" :index="i + '-' +j" :class="{'divided': item.divided}">
+                <template slot="title">{{item.title}}</template>
+                <el-menu-item
+                  v-for="(subitem,k) in item.items"
+                  :key="k"
+                  :index="i + '-' +j + '-' +k"
+                  :class="{'divided': subitem.divided}"
+                  @click.native="subitem.handler(subitem.params)">
+                  {{subitem.title}}
+                </el-menu-item>
+              </el-submenu>
+          </template>
+        </el-submenu>
+      </template>
+    </el-menu>
   </div>
 </template>
 
 <script>
 import {mapState} from 'vuex'
 import SvgManager from '@/svg/manager/svg-manager'
+// import ShapeUtils from '@/svg/utils/shape'
 export default {
   data () {
     return {
+      activeIndex: '0',
       menus: [
         {
-          title: '文件(E)',
+          title: '文件(F)',
           items: [
             {
               title: '新建',
@@ -51,7 +66,8 @@ export default {
             {
               title: '退出',
               handler: this.quit,
-              accesskey: 'Ctrl+Q'
+              accesskey: 'Ctrl+Q',
+              divided: true
             }
           ]
         },
@@ -101,6 +117,112 @@ export default {
               accesskey: 'Ctrl+I'
             }
           ]
+        },
+        {
+          title: '排列(A)',
+          items: [
+            {
+              title: '对齐(A)',
+              items: [
+                {
+                  title: '左对齐(L)',
+                  handler: this.align,
+                  params: 'left'
+                },
+                {
+                  title: '水平居中(H)',
+                  handler: this.align,
+                  params: 'horizontal'
+                },
+                {
+                  title: '右对齐(R)',
+                  handler: this.align,
+                  params: 'right'
+                },
+                {
+                  title: '上对齐(T)',
+                  handler: this.align,
+                  params: 'top',
+                  divided: true
+                },
+                {
+                  title: '垂直居中(V)',
+                  handler: this.align,
+                  params: 'vertical'
+                },
+                {
+                  title: '下对齐(B)',
+                  handler: this.align,
+                  params: 'bottom'
+                }
+              ]
+            },
+            {
+              title: '翻转(M)',
+              items: [
+                {
+                  title: '水平翻转(H)',
+                  handler: this.flipX
+                },
+                {
+                  title: '垂直翻转(V)',
+                  handler: this.flipY
+                }
+              ]
+            },
+            {
+              title: '旋转(R)',
+              items: [
+                {
+                  title: '逆时针旋转90度(N)',
+                  handler: this.rotate,
+                  params: -90
+                },
+                {
+                  title: '顺时针旋转90度(C)',
+                  handler: this.rotate,
+                  params: 90
+                }
+              ]
+            },
+            {
+              title: '组合(G)',
+              accesskey: 'Ctrl+G',
+              divided: true,
+              handler: this.group
+            },
+            {
+              title: '拆分(U)',
+              accesskey: 'Ctrl+Shift+G',
+              handler: this.ungroup
+            },
+            {
+              title: '叠放顺序(L)',
+              divided: true,
+              items: [
+                {
+                  title: '提到最前面(N)',
+                  handler: this.arrange,
+                  params: 'top'
+                },
+                {
+                  title: '上移一层(U)',
+                  handler: this.arrange,
+                  params: 'prev'
+                },
+                {
+                  title: '下移一层(D)',
+                  handler: this.arrange,
+                  params: 'next'
+                },
+                {
+                  title: '放到最后面(B)',
+                  handler: this.arrange,
+                  params: 'bottom'
+                }
+              ]
+            }
+          ]
         }
       ]
     }
@@ -144,6 +266,27 @@ export default {
     },
     invertSelect () {
       this.$store.dispatch('invertSelect')
+    },
+    align (type) {
+      this.$store.dispatch('align', type)
+    },
+    flipX () {
+      this.$store.dispatch('flipX')
+    },
+    flipY () {
+      this.$store.dispatch('flipY')
+    },
+    rotate (rotation) {
+      this.$store.dispatch('rotate', {rotation, relative: true})
+    },
+    group () {
+      this.$store.dispatch('group')
+    },
+    ungroup () {
+      this.$store.dispatch('ungroup')
+    },
+    arrange (type) {
+      this.$store.dispatch('arrange', type)
     }
   },
   computed: {
@@ -154,39 +297,11 @@ export default {
 }
 </script>
 
-<style scoped>
+<style>
+.graph-menu{
+  background-color: transparent;
+}
 .tools-menu{
  width: 100%;
 }
-.graph-dropdown-link{
-  display: inline-block;
-  width: 60px;
-  height: 32px;
-  line-height: 32px;
-  cursor: pointer;
-  font-family: '微软雅黑',sans-serif;
-}
-.graph-dropdown-link:first-child{
-  margin-left: 10px;
-  font-size: 13px;
-}
-.graph-dropdown-link:hover{
-  color: #409EFF;
-}
-.my-dropdown-item{
-  font-size: 12px;
-  font-family: '微软雅黑',sans-serif;
-}
-.my-dropdown-item .item-title, .my-dropdown-item .item-accesskey{
-  display: inline-block;
-  height: 100%;
-  line-height: 100%;
-  width: 50px;
-}
- .my-dropdown-item .item-accesskey{
-   vertical-align: baseline;
-   margin-left: 5px;
-   text-align: right;
-   width: 70px;
- }
 </style>

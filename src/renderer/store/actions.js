@@ -103,5 +103,47 @@ export default {
     if (svg) {
       commit(types.INVERT_SELECT, svg)
     }
+  },
+  align ({commit, getters}, type) {
+    const svg = getters.svg
+    if (svg) {
+      commit(types.ALIGN_SHAPES, {svg, type})
+    }
+  },
+  flipX ({commit, getters}) {
+    const svg = getters.svg
+    if (svg) {
+      commit(types.FLIP_X, svg)
+    }
+  },
+  flipY ({commit, getters}) {
+    const svg = getters.svg
+    if (svg) {
+      commit(types.FLIP_Y, svg)
+    }
+  },
+  rotate ({commit, getters}, {rotation, relative}) {
+    const svg = getters.svg
+    if (svg) {
+      commit(types.ROTATE, {svg, rotation, relative})
+    }
+  },
+  group ({commit, getters}) {
+    const svg = getters.svg
+    if (svg) {
+      commit(types.GROUP, svg)
+    }
+  },
+  ungroup ({commit, getters}) {
+    const svg = getters.svg
+    if (svg) {
+      commit(types.UNGROUP, svg)
+    }
+  },
+  arrange ({commit, getters}, type) {
+    const svg = getters.svg
+    if (svg) {
+      commit(types.ARRANGE, {svg, type})
+    }
   }
 }

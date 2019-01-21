@@ -1,31 +1,17 @@
 import Command from './Command'
+// import ShapeUtils from '@/svg/utils/shape'
 class MoveCommand extends Command {
-  constructor (shapes, startPoint, endPoint, startBoxs) {
+  constructor (shapes, startPoints, endPoints) {
     super()
     this.shapes = shapes
-    this.startPoint = startPoint
-    this.endPoint = endPoint
-    this.startBoxs = startBoxs
+    this.startPoints = startPoints
+    this.endPoints = endPoints
   }
   execute () {
-    this.shapes.forEach((element, i) => {
-      const m = element.node.getScreenCTM().inverse()
-      const newStartPoint = this.startPoint.matrixTransform(m)
-      const newEndPoint = this.endPoint.matrixTransform(m)
-      let x = this.startBoxs[i].x + newEndPoint.x - newStartPoint.x
-      let y = this.startBoxs[i].y + newEndPoint.y - newStartPoint.y
-      element.move(x, y)
-    })
+    this.shapes.forEach((element, i) => element.move(this.endPoints[i].x, this.endPoints.y))
   }
   undo () {
-    this.shapes.forEach((element, i) => {
-      const m = element.node.getScreenCTM().inverse()
-      const newStartPoint = this.startPoint.matrixTransform(m)
-      const newEndPoint = this.endPoint.matrixTransform(m)
-      let x = this.startBoxs[i].x + newStartPoint.x - newEndPoint.x
-      let y = this.startBoxs[i].y + newStartPoint.y - newEndPoint.y
-      element.move(x, y)
-    })
+    this.shapes.forEach((element, i) => element.move(this.startPoints[i].x, this.startPoints.y))
   }
 }
 export default MoveCommand

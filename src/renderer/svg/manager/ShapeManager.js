@@ -36,7 +36,6 @@ class ShapeManager {
   }
   arrange (shape, index) {
     let initIndex = this.shapes.indexOf(shape)
-    console.log(index)
     let temp = this.shapes[index]
     this.shapes[index] = shape
     this.shapes[initIndex] = temp

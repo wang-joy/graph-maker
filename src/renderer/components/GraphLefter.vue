@@ -80,6 +80,21 @@ export default {
               type: 'curve',
               desc: '曲线',
               icon: 'quxian'
+            },
+            {
+              type: 'arc',
+              desc: '弧线',
+              icon: 'huxian'
+            },
+            {
+              type: 'arc',
+              desc: '扇形',
+              icon: 'shanxing'
+            },
+            {
+              type: 'arc',
+              desc: '弓形',
+              icon: 'gong'
             }
           ]
         }

@@ -24,10 +24,11 @@ class GroupCommand extends Command {
   undo () {
     const shapeManager = this.svg.shapeManager
     shapeManager.remove(this.g)
-    this.shapes.forEach(element => {
+    for (let i = this.shapes.length - 1; i >= 0; i--) {
+      let element = this.shapes[i]
       ShapeUtils.setShapeId(element, this.svg)
       shapeManager.add(element)
-    })
+    }
     this.g.ungroup()
     const selector = this.svg.selector
     selector.multiSelect(this.shapes)

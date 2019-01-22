@@ -31,5 +31,6 @@ export default {
   ROTATE: 'ROTATE',
   GROUP: 'GROUP',
   UNGROUP: 'UNGROUP',
-  ARRANGE: 'ARRANGE'
+  ARRANGE: 'ARRANGE',
+  SELECT: 'SELECT'
 }

@@ -1,6 +1,7 @@
 import ShapeUtils from '@/svg/utils/shape'
 import 'svg.draggable.js'
 import '@/svg/plugins/resize'
+import Vue from 'vue'
 class ShapeManager {
   shapes = []
   constructor (svg) {
@@ -37,8 +38,10 @@ class ShapeManager {
   arrange (shape, index) {
     let initIndex = this.shapes.indexOf(shape)
     let temp = this.shapes[index]
-    this.shapes[index] = shape
-    this.shapes[initIndex] = temp
+    Vue.set(this.shapes, index, shape)
+    Vue.set(this.shapes, initIndex, temp)
+    // this.shapes[index] = shape
+    // this.shapes[initIndex] = temp
     shape.remember('index', index)
     temp.remember('index', initIndex)
     temp.before(shape)

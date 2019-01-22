@@ -1,4 +1,4 @@
-src/renderer/assets/js/iconfont.js
+src/renderer/assets/js/*
 src/renderer/svg/test.js
 src/renderer/svg/plugins/**
 src/index.ejs

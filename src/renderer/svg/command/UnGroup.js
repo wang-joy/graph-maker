@@ -9,12 +9,13 @@ class UnGroupCommand extends Command {
   execute () {
     const shapeManager = this.svg.shapeManager
     const selector = this.svg.selector
-    const _this = this
+    // const _this = this
     this.shapes = this.group.children()
-    this.group.each(function () {
-      ShapeUtils.setShapeId(this, _this.svg)
-      shapeManager.add(this)
-    })
+    for (let i = this.shapes.length - 1; i >= 0; i--) {
+      let element = this.shapes[i]
+      ShapeUtils.setShapeId(element, this.svg)
+      shapeManager.add(element)
+    }
     shapeManager.remove(this.group)
     this.group.ungroup()
     selector.multiSelect(this.shapes)

@@ -5,16 +5,14 @@ import SVG from 'svg.js'
 import '@/svg/plugins/resize'
 import MoveCommand from '@/svg/command/MoveCommand'
 import ResizeCommand from '@/svg/command/ResizeCommand'
+import store from '@/store'
 const mousedown = function (e) {
   const draw = this.doc()
   const mode = draw.remember('_mode')
   if (mode === 'select' && e.button === 0) {
-    const svg = draw.remember('_svg')
     let multiSelect = this.remember('multiSelect')
     if (!multiSelect) {
-      const selector = svg.selector
-      selector.select(this)
-      this.draggable()
+      store.dispatch('select', this.attr('id'))
       e.stopPropagation()
     }
   } else if (mode === 'drawstart' && e.button === 0) {

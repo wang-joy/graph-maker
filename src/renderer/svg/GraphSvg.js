@@ -21,7 +21,6 @@ import UnGroupCommand from '@/svg/command/UnGroup'
 import ArrangeCommand from '@/svg/command/Arrange'
 // import ShapeEvts from '@/svg/evts/ShapeEvts'
 export default class GraphSvg {
-  children = []
   selector = new Selector()
   shapeManager = new ShapeManager(this)
   width = 12000
@@ -70,6 +69,9 @@ export default class GraphSvg {
     }
   }
   getChildren () {
+    return this.shapeManager.shapes
+  }
+  children () {
     return this.shapeManager.shapes
   }
   saveAs () {
@@ -273,5 +275,9 @@ export default class GraphSvg {
         this.commandManager.execute(cmd)
       }
     }
+  }
+  selectById (id) {
+    const shape = this.getShapeById(id)
+    this.selector.select(shape)
   }
 }

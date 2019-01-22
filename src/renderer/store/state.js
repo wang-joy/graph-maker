@@ -1,4 +1,4 @@
 export default {
   list: [],
-  active: '' + 0
+  active: '-1'
 }

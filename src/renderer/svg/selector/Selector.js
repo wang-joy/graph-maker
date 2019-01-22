@@ -32,8 +32,18 @@ class Selector {
   }
   unselect (shape) {
     shape.selectize(false, {deepSelect: ShapeUtils.deepSelect(shape)})
-    shape.draggable(false)
+    shape.forget('multiSelect')
     this.shapes = this.shapes.filter(el => el !== shape)
+    if (this.shapes.length === 1) {
+      this.shapes[0].forget('multiSelect')
+    }
+  }
+  addSelect (shape) {
+    if (this.shapes.indexOf(shape) < 0) {
+      shape.selectize(true, {deepSelect: ShapeUtils.deepSelect(shape)})
+      this.shapes.push(shape)
+      this.shapes.forEach(item => item.remember('multiSelect', true))
+    }
   }
 }
 export default Selector

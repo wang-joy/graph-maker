@@ -1,6 +1,6 @@
 <template>
   <div class="graph-righter">
-    <el-tree 
+    <!-- <el-tree 
       :data="traverseSvg"
       :props="defaultProps"
       default-expand-all
@@ -8,7 +8,8 @@
       node-key="id"
       ref="tree"
       @node-click="handleNodeClick"
-      ></el-tree>
+      ></el-tree> -->
+      <Tree :data="traverseSvg"></Tree>
   </div>
 </template>
 
@@ -22,7 +23,7 @@ export default {
     ...mapMutations({setWidth: types.SET_RIGHTER_WIDTH}),
     ...mapActions(['select']),
     traverseNode (treeNode) {
-      let data = {label: treeNode.attr('id'), id: treeNode.attr('id')}
+      let data = {title: treeNode.attr('id'), id: treeNode.attr('id'), expand: true}
       if (treeNode.children && treeNode.children().length > 0) {
         data.children = treeNode.children().map(item => {
           return this.traverseNode(item)
@@ -47,7 +48,7 @@ export default {
       let data = []
       if (this.svg) {
         let svg = this.svg
-        let treeNode = {label: svg.label, id: svg.id}
+        let treeNode = {title: svg.label, id: svg.id, expand: true}
         data.push(treeNode)
         if (svg.children && svg.children().length > 0) {
           treeNode.children = svg.children().map(item => {

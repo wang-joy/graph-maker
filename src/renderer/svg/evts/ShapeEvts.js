@@ -12,29 +12,35 @@ const mousedown = function (e) {
   if (mode === 'select' && e.button === 0) {
     let multiSelect = this.remember('multiSelect')
     if (!multiSelect) {
-      store.dispatch('select', this.attr('id'))
-      e.stopPropagation()
+      if (!e.shiftKey) {
+        store.dispatch('select', this.attr('id'))
+      } else {
+        store.dispatch('addSelect', this.attr('id'))
+      }
+    } else {
+      if (e.shiftKey) {
+        store.dispatch('unselect', this.attr('id'))
+      }
     }
+    e.stopPropagation()
   } else if (mode === 'drawstart' && e.button === 0) {
     this.draggable(false)
   }
 }
 const drawstart = function (e) {
   if (!ShapeUtils.deepSelect(this)) {
-    const selector = this.doc().remember('_svg').selector
-    selector.select(this)
+    store.dispatch('select', this.attr('id'))
   }
 }
 const drawstop = function (e) {
   this.draggable().resize()
-  const svg = ShapeUtils.getSvg(this)
+  // const svg = ShapeUtils.getSvg(this)
   // svg.addShape(this)
   GraphMask.hide()
   SVG.off(GraphMask.el, 'mousedown.drawend')
   this.doc().remember('_mode', 'select')
   if (ShapeUtils.deepSelect(this)) {
-    const selector = svg.selector
-    selector.select(this)
+    store.dispatch('select', this.attr('id'))
   }
 }
 const select = function (e) {

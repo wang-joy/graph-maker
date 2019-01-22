@@ -390,15 +390,15 @@ ResizeHandler.prototype.resize = function (event) {
   SVG.on(window, 'touchmove.resize', function (e) {
     _this.update(e || window.event)
   })
-  SVG.on(window, 'touchend.resize', function () {
-    _this.done()
+  SVG.on(window, 'touchend.resize', function (e) {
+    _this.done(e)
   })
   // Mouse.
   SVG.on(window, 'mousemove.resize', function (e) {
     _this.update(e || window.event)
   })
-  SVG.on(window, 'mouseup.resize', function () {
-    _this.done()
+  SVG.on(window, 'mouseup.resize', function (e) {
+    _this.done(e)
   })
 }
 
@@ -427,13 +427,17 @@ ResizeHandler.prototype.update = function (event) {
 
 // Is called on mouseup.
 // Removes the update-function from the mousemove event
-ResizeHandler.prototype.done = function () {
+ResizeHandler.prototype.done = function (e) {
   this.lastUpdateCall = null
   SVG.off(window, 'mousemove.resize')
   SVG.off(window, 'mouseup.resize')
   SVG.off(window, 'touchmove.resize')
   SVG.off(window, 'touchend.resize')
-  this.el.fire('resizedone',{handler: this})
+  var txPt = this._extractPosition(e)
+  var p = this.transformPoint(txPt.x, txPt.y)
+  var diffX = p.x - this.parameters.p.x
+  var diffY = p.y - this.parameters.p.y
+  this.el.fire('resizedone',{handler: this, dx: diffX, dy: diffY})
 }
 
 // The flag is used to determine whether the resizing is used with a left-Point (first bit) and top-point (second bit)

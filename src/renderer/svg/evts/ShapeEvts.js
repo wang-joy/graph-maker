@@ -51,13 +51,13 @@ const imgLoaded = function () {
 const dragend = function ({detail}) {
   let startPoint = detail.handler.startPoints.point
   let endPoint = detail.p
-  if (startPoint.x - endPoint.x >= 1 || startPoint.y - endPoint.y >= 1) {
+  if (Math.abs(startPoint.x - endPoint.x) >= 1 || Math.abs(startPoint.y - endPoint.y) >= 1) {
     const startPoints = detail.handler.startBoxs.map(item => { return {x: item.x, y: item.y} })
     const svg = ShapeUtils.getSvg(this)
     const shapes = svg.getSelectedShapes()
     const endPoints = shapes.map(item => { return {x: ShapeUtils.getBBox(item).x, y: ShapeUtils.getBBox(item).y} })
     startPoints.some((item, i) => {
-      if (item.x - endPoints[i].x >= 1 || item.y - endPoints[i].y >= 1) {
+      if (Math.abs(item.x - endPoints[i].x) >= 1 || Math.abs(item.y - endPoints[i].y) >= 1) {
         let command = new MoveCommand(shapes, startPoints, endPoints)
         svg.commandManager.execute(command)
         return true
@@ -66,28 +66,32 @@ const dragend = function ({detail}) {
   }
 }
 const resizedone = function ({detail}) {
-  let parameters = detail.handler.parameters
-  let startBox = parameters.box
-  let commandManager = ShapeUtils.getSvg(this).commandManager
-  let start = {
-    width: startBox.width,
-    height: startBox.height,
-    transform: parameters.transform,
-    array: parameters.array,
-    x: startBox.x,
-    y: startBox.y
+  let dx = detail.dx
+  let dy = detail.dy
+  if (Math.abs(dx) > 0 || Math.abs(dy) > 0) {
+    let parameters = detail.handler.parameters
+    let startBox = parameters.box
+    let commandManager = ShapeUtils.getSvg(this).commandManager
+    let start = {
+      width: startBox.width,
+      height: startBox.height,
+      transform: parameters.transform,
+      array: parameters.array,
+      x: startBox.x,
+      y: startBox.y
+    }
+    let box = this.bbox()
+    let end = {
+      width: box.width,
+      height: box.height,
+      transform: this.transform(),
+      array: this.array ? this.array().valueOf() : [],
+      x: box.x,
+      y: box.y
+    }
+    let cmd = new ResizeCommand(this, start, end)
+    commandManager.execute(cmd)
   }
-  let box = this.bbox()
-  let end = {
-    width: box.width,
-    height: box.height,
-    transform: this.transform(),
-    array: this.array ? this.array().valueOf() : [],
-    x: box.x,
-    y: box.y
-  }
-  let cmd = new ResizeCommand(this, start, end)
-  commandManager.execute(cmd)
 }
 const beforedrag = function (e) {
   // e.preventDefault()

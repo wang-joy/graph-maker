@@ -19,6 +19,7 @@ export default {
     for (const key in ShapeEvts) {
       if (ShapeEvts.hasOwnProperty(key)) {
         const evt = ShapeEvts[key]
+        shape.off(key)
         shape.on(key, evt)
       }
     }
@@ -60,6 +61,7 @@ export default {
     for (const key in ShapeEvts) {
       if (ShapeEvts.hasOwnProperty(key)) {
         const evt = ShapeEvts[key]
+        shape.off(key)
         shape.on(key, evt)
       }
     }

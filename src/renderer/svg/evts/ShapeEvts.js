@@ -49,10 +49,9 @@ const imgLoaded = function () {
   selector.select(this)
 }
 const dragend = function ({detail}) {
-  console.log(detail)
   let startPoint = detail.handler.startPoints.point
   let endPoint = detail.p
-  if (startPoint.x - endPoint.x >= 1 || startPoint.y - endPoint.y >= 0) {
+  if (startPoint.x - endPoint.x >= 1 || startPoint.y - endPoint.y >= 1) {
     const startPoints = detail.handler.startBoxs.map(item => { return {x: item.x, y: item.y} })
     const svg = ShapeUtils.getSvg(this)
     const shapes = svg.getSelectedShapes()
@@ -91,11 +90,13 @@ const resizedone = function ({detail}) {
   commandManager.execute(cmd)
 }
 const beforedrag = function (e) {
+  // e.preventDefault()
   const shapes = ShapeUtils.getSvg(this).selector.shapes
   const startBoxs = shapes.map(item => ShapeUtils.getBBox(item))
   e.detail.handler.startBoxs = startBoxs
 }
 const dragmove = function (e) {
+  e.preventDefault()
   let startPoint = e.detail.handler.startPoints.point
   const startBoxs = e.detail.handler.startBoxs
   let p = e.detail.p

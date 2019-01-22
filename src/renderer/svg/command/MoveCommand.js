@@ -8,10 +8,10 @@ class MoveCommand extends Command {
     this.endPoints = endPoints
   }
   execute () {
-    this.shapes.forEach((element, i) => element.move(this.endPoints[i].x, this.endPoints.y))
+    this.shapes.forEach((element, i) => element.move(this.endPoints[i].x, this.endPoints[i].y))
   }
   undo () {
-    this.shapes.forEach((element, i) => element.move(this.startPoints[i].x, this.startPoints.y))
+    this.shapes.forEach((element, i) => element.move(this.startPoints[i].x, this.startPoints[i].y))
   }
 }
 export default MoveCommand

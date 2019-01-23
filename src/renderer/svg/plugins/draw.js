@@ -174,5 +174,44 @@ SVG.Element.prototype.draw.extend('ellipse', {
       this.snapToGrid(ellipse);
       this.el.attr(ellipse);
   }
-  
+})
+SVG.Element.prototype.draw.extend('circle', {
+    
+  init:function(e){
+      // We start with a circle with radius 1 at the position of the cursor
+      var p = this.startPoint;
+
+      this.el.attr({ x: p.x, y: p.y, r: 0 });
+      
+  },
+
+  calc:function (e) {
+      var p = this.transformPoint(e.clientX, e.clientY);
+      var rect = {
+        x: this.startPoint.x,
+        y: this.startPoint.y
+      }
+      rect.width = p.x - rect.x
+      rect.height = p.y - rect.y
+      let cx = 0
+      let cy = 0
+      let r = Math.max(Math.abs(rect.width/2), Math.abs(rect.height/2))
+      if (rect.width < 0){
+        cx = rect.x - r
+      } else {
+        cx = rect.x + r
+      }
+      if (rect.height < 0){
+        cy = rect.y - r
+      } else {
+        cy = rect.y + r
+      }
+      // this.snapToGrid(ellipse);
+      let circle = {
+        cx: cx,
+        cy: cy,
+        r: r
+      }
+      this.el.attr(circle);
+  }
 })

@@ -1,63 +1,28 @@
 <template>
   <div class="graph-righter">
-    <!-- <el-tree 
-      :data="traverseSvg"
-      :props="defaultProps"
-      default-expand-all
-      highlight-current
-      node-key="id"
-      ref="tree"
-      @node-click="handleNodeClick"
-      ></el-tree> -->
-      <Tree :data="traverseSvg"></Tree>
+    <div class="graph-tree">
+        <graph-tree></graph-tree>
+    </div>
   </div>
 </template>
 
 <script>
-import {mapMutations, mapGetters, mapActions, mapState} from 'vuex'
+import {mapMutations, mapGetters, mapActions} from 'vuex'
 import types from '../store/mutations-type'
-// import GraphSvg from '@/svg/GraphSvg'
-// import SvgManager from '@/svg/manager/svg-manager'
+import VJstree from 'vue-jstree'
+import GraphTree from './common/GraphTree'
 export default {
+  components: {VJstree, GraphTree},
   methods: {
     ...mapMutations({setWidth: types.SET_RIGHTER_WIDTH}),
-    ...mapActions(['select']),
-    traverseNode (treeNode) {
-      let data = {title: treeNode.attr('id'), id: treeNode.attr('id'), expand: true}
-      if (treeNode.children && treeNode.children().length > 0) {
-        data.children = treeNode.children().map(item => {
-          return this.traverseNode(item)
-        })
-      }
-      return data
-    },
-    handleNodeClick ({label}) {
-      this.$store.dispatch('select', label)
-    }
+    ...mapActions(['select'])
   },
   mounted () {
     let rect = this.$el.getBoundingClientRect()
     this.setWidth(rect.width)
   },
   computed: {
-    ...mapGetters(['svg']),
-    ...mapState({
-      currentNodeKey: state => state.Shape.activeId
-    }),
-    traverseSvg () {
-      let data = []
-      if (this.svg) {
-        let svg = this.svg
-        let treeNode = {title: svg.label, id: svg.id, expand: true}
-        data.push(treeNode)
-        if (svg.children && svg.children().length > 0) {
-          treeNode.children = svg.children().map(item => {
-            return this.traverseNode(item)
-          })
-        }
-      }
-      return data
-    }
+    ...mapGetters(['svg'])
   },
   data () {
     return {
@@ -65,11 +30,6 @@ export default {
         children: 'children',
         label: 'label'
       }
-    }
-  },
-  watch: {
-    currentNodeKey (val) {
-      this.$refs.tree.setCurrentKey(val)
     }
   }
 }
@@ -80,5 +40,11 @@ export default {
   display: inline-block;
   width: 200px;
   vertical-align: top;
+}
+.graph-tree {
+  height: 200px;
+  overflow: auto;
+  border-bottom: 1px solid #ccc;
+  padding-left: 30px;
 }
 </style>

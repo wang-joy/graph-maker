@@ -13,13 +13,13 @@ const mousedown = function (e) {
     let multiSelect = this.remember('multiSelect')
     if (!multiSelect) {
       if (!e.shiftKey) {
-        store.dispatch('select', this.attr('id'))
+        store.dispatch('selectShape', this)
       } else {
-        store.dispatch('addSelect', this.attr('id'))
+        store.dispatch('addSelect', this)
       }
     } else {
       if (e.shiftKey) {
-        store.dispatch('unselect', this.attr('id'))
+        store.dispatch('unselect', this)
       }
     }
     e.stopPropagation()
@@ -29,7 +29,7 @@ const mousedown = function (e) {
 }
 const drawstart = function (e) {
   if (!ShapeUtils.deepSelect(this)) {
-    store.dispatch('select', this.attr('id'))
+    store.dispatch('selectShape', this)
   }
 }
 const drawstop = function (e) {
@@ -40,17 +40,17 @@ const drawstop = function (e) {
   SVG.off(GraphMask.el, 'mousedown.drawend')
   this.doc().remember('_mode', 'select')
   if (ShapeUtils.deepSelect(this)) {
-    store.dispatch('select', this.attr('id'))
+    store.dispatch('selectShape', this)
   }
 }
 const select = function (e) {
 }
+const resizing = function () {
+  this.draggable(false)
+}
 const imgLoaded = function () {
   this.draggable().resize()
-  const svg = ShapeUtils.getSvg(this)
-  // svg.addShape(this)
-  const selector = svg.selector
-  selector.select(this)
+  store.dispatch('selectShape', this)
 }
 const dragend = function ({detail}) {
   let startPoint = detail.handler.startPoints.point
@@ -95,6 +95,7 @@ const resizedone = function ({detail}) {
     }
     let cmd = new ResizeCommand(this, start, end)
     commandManager.execute(cmd)
+    this.draggable()
   }
 }
 const beforedrag = function (e) {
@@ -128,5 +129,6 @@ export default {
   dragend,
   resizedone,
   dragmove,
-  beforedrag
+  beforedrag,
+  resizing
 }

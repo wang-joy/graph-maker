@@ -276,8 +276,7 @@ export default class GraphSvg {
       }
     }
   }
-  selectById (id) {
-    const shape = this.getShapeById(id)
+  selectShape (shape) {
     this.selector.select(shape)
   }
 }

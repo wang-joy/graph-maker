@@ -9,7 +9,8 @@
           class="btn"
           v-for="(btn, i) in btnGroup.btns"
           :key="index + '_' + i" 
-          :title="btn.title" >
+          :title="btn.title"
+          @click="btn.handler(btn.params)" :disabled="btn.disabled">
             <graph-icon :type="btn.icon"></graph-icon>
           </el-button>
       </el-button-group>
@@ -19,6 +20,8 @@
 
 <script>
 import GraphIcon from '../icon/GraphIcon'
+import { mapState } from 'vuex'
+import SvgManager from '@/svg/manager/svg-manager'
 export default {
   components: {GraphIcon},
   data () {
@@ -30,16 +33,19 @@ export default {
             {
               title: '新建文件',
               click: 'createFile',
-              icon: 'xinjian'
+              icon: 'xinjian',
+              handler: this.create
             },
             {
               title: '打开文件',
               click: 'createFile',
+              handler: this.open,
               icon: 'dakai'
             },
             {
               title: '保存文件',
               click: 'createFile',
+              handler: this.save,
               icon: 'baocun'
             }
           ]
@@ -52,31 +58,37 @@ export default {
             {
               title: '取消上次操作',
               click: 'createFile',
+              handler: this.undo,
               icon: 'quxiaoshangcicaozuo'
             },
             {
               title: '恢复上次操作',
               click: 'createFile',
+              handler: this.redo,
               icon: 'huifushangcicaozuo'
             },
             {
               title: '剪切',
               click: 'createFile',
+              handler: this.cute,
               icon: 'jianqie'
             },
             {
               title: '复制',
               click: 'createFile',
+              handler: this.copy,
               icon: 'kaobei'
             },
             {
               title: '粘贴',
               click: 'createFile',
+              handler: this.paste,
               icon: 'niantie'
             },
             {
               title: '删除',
               click: 'createFile',
+              handler: this.remove,
               icon: 'shanchu'
             }
           ]
@@ -89,42 +101,56 @@ export default {
             {
               title: '左对齐',
               click: 'createFile',
-              icon: 'zuoduiqi'
+              icon: 'zuoduiqi',
+              handler: this.align,
+              params: 'left'
             },
             {
               title: '右对齐',
               click: 'shuipingjuzhong',
-              icon: 'youduiqi'
+              icon: 'youduiqi',
+              handler: this.align,
+              params: 'right'
             },
             {
               title: '上对齐',
               click: 'createFile',
-              icon: 'shangduiqi'
+              icon: 'shangduiqi',
+              handler: this.align,
+              params: 'top'
             },
             {
               title: '下对齐',
               click: 'xiaduiqi',
-              icon: 'xiaduiqi'
+              icon: 'xiaduiqi',
+              handler: this.align,
+              params: 'bottom'
             },
             {
               title: '水平居中',
               click: 'createFile',
-              icon: 'shuipingjuzhong'
+              icon: 'shuipingjuzhong',
+              handler: this.align,
+              params: 'horizontal'
             },
             {
               title: '垂直居中',
               click: 'createFile',
-              icon: 'chuizhijuzhong'
+              icon: 'chuizhijuzhong',
+              handler: this.align,
+              params: 'vertical'
             },
             {
               title: '等宽',
               click: 'createFile',
-              icon: 'dengkuan'
+              icon: 'dengkuan',
+              disabled: true
             },
             {
               title: '等高',
               click: 'createFile',
-              icon: 'denggao'
+              icon: 'denggao',
+              disabled: true
             }
           ]
         },
@@ -136,22 +162,30 @@ export default {
             {
               title: '移到最上',
               click: 'createFile',
-              icon: 'yidaozuishang'
+              icon: 'yidaozuishang',
+              handler: this.arrange,
+              params: 'top'
             },
             {
               title: '上移一层',
               click: 'shuipingjuzhong',
-              icon: 'shangyiyiceng2'
+              icon: 'shangyiyiceng2',
+              handler: this.arrange,
+              params: 'prev'
             },
             {
               title: '下移一层',
               click: 'createFile',
-              icon: 'xiayiyiceng2'
+              icon: 'xiayiyiceng2',
+              handler: this.arrange,
+              params: 'next'
             },
             {
               title: '移到最下',
               click: 'xiaduiqi',
-              icon: 'yidaozuixia1'
+              icon: 'yidaozuixia1',
+              handler: this.arrange,
+              params: 'bottom'
             }
           ]
         },
@@ -163,22 +197,28 @@ export default {
             {
               title: '水平翻转',
               click: 'createFile',
-              icon: 'shuipingfanzhuan'
+              icon: 'shuipingfanzhuan',
+              disabled: true
             },
             {
               title: '垂直翻转',
               click: 'shuipingjuzhong',
-              icon: 'chuizhifanzhuan'
+              icon: 'chuizhifanzhuan',
+              disabled: true
             },
             {
               title: '顺时针旋转90度',
               click: 'createFile',
-              icon: 'shunshizhen'
+              icon: 'shunshizhen',
+              handler: this.rotate,
+              params: 90
             },
             {
               title: '逆时针旋转90度',
               click: 'xiaduiqi',
-              icon: 'nishizhen'
+              icon: 'nishizhen',
+              handler: this.rotate,
+              params: -90
             }
           ]
         },
@@ -190,22 +230,20 @@ export default {
             {
               title: '恢复原始尺寸',
               click: 'createFile',
-              icon: 'huifuyuanshichicun'
+              icon: 'huifuyuanshichicun',
+              disabled: true
             },
             {
               title: '放大',
               click: 'shuipingjuzhong',
-              icon: 'fangda'
+              icon: 'fangda',
+              disabled: true
             },
             {
               title: '缩小',
               click: 'createFile',
-              icon: 'suoxiao'
-            },
-            {
-              title: '逆时针旋转90度',
-              click: 'xiaduiqi',
-              icon: 'nishizhen'
+              icon: 'suoxiao',
+              disabled: true
             }
           ]
         },
@@ -217,32 +255,38 @@ export default {
             {
               title: '文字加粗',
               click: 'createFile',
-              icon: 'jiacub'
+              icon: 'jiacub',
+              disabled: true
             },
             {
               title: '文字倾斜',
               click: 'shuipingjuzhong',
-              icon: 'xietii'
+              icon: 'xietii',
+              disabled: true
             },
             {
               title: '文字左对齐',
               click: 'createFile',
-              icon: 'zuoduiqi1'
+              icon: 'zuoduiqi1',
+              disabled: true
             },
             {
               title: '文字居中对齐',
               click: 'zhongduiqi',
-              icon: 'zhongduiqi'
+              icon: 'zhongduiqi',
+              disabled: true
             },
             {
               title: '文字右对齐',
               click: 'zhongduiqi',
-              icon: 'youduiqi1'
+              icon: 'youduiqi1',
+              disabled: true
             },
             {
               title: '文字颜色',
               click: 'zhongduiqi',
-              icon: 'wenziyanse'
+              icon: 'wenziyanse',
+              disabled: true
             }
           ]
         },
@@ -254,12 +298,14 @@ export default {
             {
               title: '填充色',
               click: 'createFile',
-              icon: 'tianchongse'
+              icon: 'tianchongse',
+              disabled: true
             },
             {
               title: '线条颜色',
               click: 'shuipingjuzhong',
-              icon: 'xiantiaoyanse'
+              icon: 'xiantiaoyanse',
+              disabled: true
             }
           ]
         },
@@ -269,29 +315,100 @@ export default {
         {
           btns: [
             {
-              title: '合并元件',
+              title: '组合',
               click: 'createFile',
-              icon: 'zuhe1'
+              icon: 'zuhe1',
+              handler: this.group
             },
             {
-              title: '拆分元件',
+              title: '拆分',
               click: 'shuipingjuzhong',
-              icon: 'fenzu'
+              icon: 'fenzu',
+              handler: this.ungroup
             },
             {
               title: '全部选中',
               click: 'shuipingjuzhong',
-              icon: 'quanbuxuanzhong'
+              icon: 'quanbuxuanzhong',
+              handler: this.selectAll
             },
             {
               title: '反向选中',
               click: 'shuipingjuzhong',
-              icon: 'fanxiangxuanzhong'
+              icon: 'fanxiangxuanzhong',
+              handler: this.invertSelect
             }
           ]
         }
       ]
     }
+  },
+  methods: {
+    create () {
+      this.$store.dispatch('createSvg')
+    },
+    save () {
+      this.$store.dispatch('saveSvg')
+    },
+    saveAs () {
+      this.$store.dispatch('saveAsSvg')
+    },
+    open () {
+      this.$store.dispatch('openSvg')
+    },
+    quit () {
+      this.$store.dispatch('winQuit')
+    },
+    undo () {
+      this.$store.dispatch('undo')
+    },
+    redo () {
+      this.$store.dispatch('redo')
+    },
+    cute () {
+      this.$store.dispatch('cute')
+    },
+    copy () {
+      this.$store.dispatch('copy')
+    },
+    paste () {
+      this.$store.dispatch('paste')
+    },
+    remove () {
+      this.$store.dispatch('remove')
+    },
+    selectAll () {
+      this.$store.dispatch('selectAll')
+    },
+    invertSelect () {
+      this.$store.dispatch('invertSelect')
+    },
+    align (type) {
+      this.$store.dispatch('align', type)
+    },
+    flipX () {
+      this.$store.dispatch('flipX')
+    },
+    flipY () {
+      this.$store.dispatch('flipY')
+    },
+    rotate (rotation) {
+      this.$store.dispatch('rotate', {rotation, relative: true})
+    },
+    group () {
+      this.$store.dispatch('group')
+    },
+    ungroup () {
+      this.$store.dispatch('ungroup')
+    },
+    arrange (type) {
+      this.$store.dispatch('arrange', type)
+    }
+  },
+  computed: {
+    ...mapState({
+      svg: state => SvgManager.getById(state.active)
+    })
   }
 }
 </script>

@@ -43,6 +43,12 @@ window.addEventListener('keydown', function (e) {
     } else if (e.ctrlKey && !e.shiftKey && e.keyCode === keyCodes.get('I')) {
       store.dispatch('invertSelect')
       e.preventDefault()
+    } else if (e.ctrlKey && !e.shiftKey && e.keyCode === keyCodes.get('G')) {
+      store.dispatch('group')
+      e.preventDefault()
+    } else if (e.ctrlKey && e.shiftKey && e.keyCode === keyCodes.get('G')) {
+      store.dispatch('ungroup')
+      e.preventDefault()
     }
   }
 })

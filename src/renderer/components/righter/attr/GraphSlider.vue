@@ -1,12 +1,8 @@
 <template>
   <div>
-    <span class="graph-select-title">{{attr.desc}}</span>
-    <span class="graph-select-value">
-      <el-select  v-model="attr.val" @change="handler(attr.setter)">
-        <el-option v-for="(item, index) in attr.opts.options" :key="index" :value="item.val" :label="item.desc">
-          {{item.desc}}
-        </el-option>
-      </el-select>
+    <span class="graph-slider-title">{{attr.desc}}</span>
+    <span class="graph-slider-value">
+      <el-slider v-model="val" :format-tooltip="formatTooltip" show-tooltip @change="handler"></el-slider>
     </span>
   </div>
 </template>
@@ -17,7 +13,7 @@ import AttrUtils from '@/svg/utils/attr'
 export default {
   data () {
     return {
-      val: ''
+      val: this.attr.val * 100
     }
   },
   props: {
@@ -26,10 +22,13 @@ export default {
     }
   },
   methods: {
-    handler (setter) {
+    handler (val) {
       if (this.shapes.length > 0) {
-        setter.call(AttrUtils, this.shapes, this.attr.val)
+        this.attr.setter.call(AttrUtils, this.shapes, val / 100)
       }
+    },
+    formatTooltip (val) {
+      return val / 100
     }
   },
   computed: {
@@ -40,12 +39,20 @@ export default {
       }
       return []
     }
+  },
+  watch: {
+    attr: {
+      deep: true,
+      handler (val) {
+        this.val = val.val * 100
+      }
+    }
   }
 }
 </script>
 
 <style>
-  .graph-select-title, .graph-select-value{
+  .graph-slider-title, .graph-slider-value{
     display: inline-block;
     width: 100px;
     border-bottom: 1px solid #ccc;
@@ -53,10 +60,11 @@ export default {
     vertical-align: top;
     font-size: 14px;
   }
-  .graph-select-value{
+  .graph-slider-value{
     border-left: 1px solid #ccc;
+    padding-left: 5px;
   }
-  .graph-select-title{
+  .graph-slider-title{
     line-height: 28px;
     font-family: "微软雅黑", sans-serif;
     text-align: right;

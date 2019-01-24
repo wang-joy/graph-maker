@@ -2,7 +2,7 @@
   <div>
     <span class="graph-input-title">{{attr.desc}}</span>
     <span class="graph-input-value">
-      <el-input v-model="attr.val" placeholder="请输入内容" @keyup.enter.native="handler(attr.setter)"></el-input>
+      <el-input v-model="attr.val" :disabled="!attr.setter" @keyup.enter.native="handler(attr.setter)"></el-input>
     </span>
   </div>
 </template>
@@ -22,8 +22,15 @@ export default {
   },
   methods: {
     handler (setter) {
-      if (this.shapes.length > 0) {
-        setter.call(AttrUtils, this.shapes, this.attr.val)
+      let svg = this.svg
+      if (svg) {
+        let selector = svg.selector
+        let shapes = selector.shapes
+        if (shapes.length > 0) {
+          this.attr.setter.call(AttrUtils, shapes, this.attr.val)
+        } else {
+          this.attr.setter.call(AttrUtils, svg, this.attr.val)
+        }
       }
     }
   },

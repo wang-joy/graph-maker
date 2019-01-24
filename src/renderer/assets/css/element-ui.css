@@ -86,10 +86,25 @@
 }
 
 /****graph-input***/
-.graph-input-value .el-input__inner{
+.graph-input-value .el-input__inner, .graph-select-value .el-input__inner{
   border-radius: 0;
   border: none;
   height: 29px;
   line-height: 29px;
   padding-left: 5px; 
+}
+.graph-select-value .el-input__icon{
+  line-height: 28px;
+}
+.graph-slider-value .el-slider {
+  width: 70px;
+  height: 28px;
+}
+.graph-slider-value .el-slider__button-wrapper{
+  width: 28px;
+  height: 28px;
+  top: -10px;
+}
+.graph-slider-value .el-slider__runway{
+  margin: 12px 0;
 }

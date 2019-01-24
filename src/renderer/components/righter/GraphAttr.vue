@@ -9,8 +9,10 @@
         <graph-attr-color :key="index" :attr="item"></graph-attr-color>
       </template>
       <template v-else-if="item.type === 'select'">
-        {{item.title}}
         <graph-attr-select :key="index" :attr="item"></graph-attr-select>
+      </template>
+      <template v-else-if="item.type === 'slider'">
+        <graph-attr-slider :key="index" :attr="item"></graph-attr-slider>
       </template>
     </template>
   </div>
@@ -21,9 +23,10 @@ import { mapGetters } from 'vuex'
 import GraphAttrInput from './attr/GraphInput'
 import GraphAttrColor from './attr/GraphColor'
 import GraphAttrSelect from './attr/GraphSelect'
+import GraphAttrSlider from './attr/GraphSlider'
 import AttrUtils from '@/svg/utils/attr'
 export default {
-  components: {GraphAttrInput, GraphAttrColor, GraphAttrSelect},
+  components: {GraphAttrInput, GraphAttrColor, GraphAttrSelect, GraphAttrSlider},
   data () {
     return {
       title: '基本属性'
@@ -38,6 +41,8 @@ export default {
         let shapes = selector.shapes
         if (shapes.length > 0) {
           return AttrUtils.getShapesAttrs(shapes)
+        } else {
+          return AttrUtils.getSvgAttrs(svg)
         }
       }
       return []

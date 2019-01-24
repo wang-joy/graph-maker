@@ -29,7 +29,16 @@ export default {
   methods: {
     set (color) {
       this.attr.val = color
-      this.attr.setter.call(AttrUtils, this.shapes, color)
+      let svg = this.svg
+      if (svg) {
+        let selector = svg.selector
+        let shapes = selector.shapes
+        if (shapes.length > 0) {
+          this.attr.setter.call(AttrUtils, shapes, color)
+        } else {
+          this.attr.setter.call(AttrUtils, svg, color)
+        }
+      }
     },
     hide () {
       this.show = false
@@ -78,5 +87,6 @@ export default {
   background: #fff;
   z-index: 1;
   border: 1px solid #ccc;
+  z-index: 9999;
 }
 </style>

@@ -138,7 +138,8 @@ export default class GraphSvg {
     let viewBox = new SVG.ViewBox(attrs.viewBox)
     this.width = attrs.width || viewBox.width
     this.height = attrs.height || viewBox.height
-    this.backgroundColor = child.style['background'] || child.style['background-color'] || '#FFFFFF'
+    let backgroundColor = child.style['background'] || child.style['background-color'] || '#FFFFFF'
+    this.backgroundColor = this.__colorRGB2Hex(backgroundColor).toUpperCase()
     this.label = path.basename(this.filePath, path.extname(this.filePath))
     let children = child.children
     Array.prototype.forEach.call(children, e => {
@@ -278,5 +279,13 @@ export default class GraphSvg {
   }
   selectShape (shape) {
     this.selector.select(shape)
+  }
+  __colorRGB2Hex (color) {
+    var rgb = color.split(',')
+    var r = parseInt(rgb[0].split('(')[1])
+    var g = parseInt(rgb[1])
+    var b = parseInt(rgb[2].split(')')[0])
+    var hex = '#' + ((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1)
+    return hex
   }
 }

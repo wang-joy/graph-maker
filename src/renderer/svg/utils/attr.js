@@ -1,12 +1,13 @@
 import ShapeUtils from './shape'
 import SVG from 'svg.js'
 class Attr {
-  constructor (title, desc, val, setter, type) {
+  constructor (title, desc, val, setter, type, opts) {
     this.title = title
     this.desc = desc
     this.val = val
     this.setter = setter
     this.type = type
+    this.opts = opts
   }
 }
 export default {
@@ -17,9 +18,32 @@ export default {
       case 'rect':
         attrs = this.getRectAttrs(shape)
         break
+      case 'circle':
+        attrs = this.getCircleAttrs(shape)
+        break
+      case 'ellipse':
+        attrs = this.getEllipseAttrs(shape)
+        break
+      case 'line':
+        attrs = this.getLineAttrs(shape)
+        break
+      case 'polygon':
+        attrs = this.getPolygonAttrs(shape)
+        break
+      case 'polyline':
+        attrs = this.getPolylineAttrs(shape)
+        break
+      case 'image':
+        attrs = this.getImgAttrs(shape)
+        break
+      case 'curve':
+        attrs = this.getCurveAttrs(shape)
+        break
       case 'group':
         attrs = this.getGroupAttrs(shape)
         break
+      default:
+        attrs = []
     }
     return attrs
   },
@@ -53,11 +77,45 @@ export default {
   },
   // 获取矩形相关的属性
   getRectAttrs (shape) {
-    return [this.getLeft(shape), this.getTop(shape), this.getWidth(shape), this.getHeight(shape), this.getAngle(shape), this.getRx(shape), this.getRy(shape), this.getFill(shape), this.getFillOpacity(shape), this.getStroke(shape), this.getStrokeWidth(shape), this.getStrokeOpacity(shape), this.getStrokeDashArray(shape)]
+    return [this.getId(shape), this.getType(shape), this.getLeft(shape), this.getTop(shape), this.getWidth(shape), this.getHeight(shape), this.getAngle(shape), this.getRx(shape), this.getRy(shape), this.getFill(shape), this.getFillOpacity(shape), this.getStroke(shape), this.getStrokeWidth(shape), this.getStrokeOpacity(shape), this.getStrokeDashArray(shape)]
+  },
+  // 获取圆形相关的属性
+  getCircleAttrs (shape) {
+    return [this.getId(shape), this.getType(shape), this.getLeft(shape), this.getTop(shape), this.getWidth(shape), this.getHeight(shape), this.getRadius(shape), this.getFill(shape), this.getFillOpacity(shape), this.getStroke(shape), this.getStrokeWidth(shape), this.getStrokeOpacity(shape), this.getStrokeDashArray(shape)]
+  },
+  // 获取椭圆相关的属性
+  getEllipseAttrs (shape) {
+    return [this.getId(shape), this.getType(shape), this.getLeft(shape), this.getTop(shape), this.getWidth(shape), this.getHeight(shape), this.getAngle(shape), this.getRx(shape, 'x半轴'), this.getRy(shape, 'y半轴'), this.getFill(shape), this.getFillOpacity(shape), this.getStroke(shape), this.getStrokeWidth(shape), this.getStrokeOpacity(shape), this.getStrokeDashArray(shape)]
+  },
+  // 获取直线相关的属性
+  getLineAttrs (shape) {
+    return [this.getId(shape), this.getType(shape), this.getLeft(shape), this.getTop(shape), this.getAngle(shape), this.getStroke(shape), this.getStrokeWidth(shape), this.getStrokeOpacity(shape), this.getStrokeDashArray(shape)]
+  },
+  // 获取折线相关的属性
+  getPolylineAttrs (shape) {
+    return [this.getId(shape), this.getType(shape), this.getLeft(shape), this.getTop(shape), this.getWidth(shape), this.getAngle(shape), this.getFill(shape), this.getFillOpacity(shape), this.getStroke(shape), this.getStrokeWidth(shape), this.getStrokeOpacity(shape), this.getStrokeDashArray(shape)]
+  },
+  // 获取多边形相关的属性
+  getPolygonAttrs (shape) {
+    return [this.getId(shape), this.getType(shape), this.getLeft(shape), this.getTop(shape), this.getAngle(shape), this.getFill(shape), this.getFillOpacity(shape), this.getStroke(shape), this.getStrokeWidth(shape), this.getStrokeOpacity(shape), this.getStrokeDashArray(shape)]
+  },
+  // 获取图片相关的属性
+  getImgAttrs (shape) {
+    return [this.getId(shape), this.getType(shape), this.getLeft(shape), this.getTop(shape), this.getWidth(shape), this.getHeight(shape), this.getAngle(shape), this.getImgPath(shape)]
+  },
+  // 获取曲线相关的属性
+  getCurveAttrs (shape) {
+    return [this.getId(shape), this.getType(shape), this.getLeft(shape), this.getTop(shape), this.getWidth(shape), this.getHeight(shape), this.getAngle(shape), this.getFill(shape), this.getFillOpacity(shape), this.getStroke(shape), this.getStrokeWidth(shape), this.getStrokeOpacity(shape), this.getStrokeDashArray(shape)]
   },
   // 获取组合相关的属性
   getGroupAttrs (shape) {
-    return [this.getLeft(shape), this.getTop(shape), this.getWidth(shape), this.getHeight(shape), this.getAngle(shape)]
+    return [this.getId(shape), this.getType(shape), this.getLeft(shape), this.getTop(shape), this.getWidth(shape), this.getHeight(shape), this.getAngle(shape)]
+  },
+  getId (shape, desc = 'ID') {
+    return new Attr('id', desc, shape.attr('id'), this.setId, 'input')
+  },
+  getType (shape, desc = '类型') {
+    return new Attr('type', desc, ShapeUtils.getShapeType(shape), null, 'input')
   },
   getLeft (shape, desc = '左边') {
     let val = this.__toInt(this.__getP(shape).x)
@@ -114,13 +172,28 @@ export default {
     return new Attr('stroke-opacity', desc, shape.attr('stroke-opacity'), this.setStrokeOpacity, 'slider')
   },
   getStrokeDashArray (shape, desc = '线条类型') {
-    return new Attr('stroke-dasharray', desc, '' + shape.attr('stroke-dasharray'), this.setStrokeDashArray, 'select')
+    let options = [
+      { val: '0', desc: '——————' },
+      { val: '5,5', desc: '------------------' },
+      { val: '20,10,5,10', desc: '—— - —— -' }
+    ]
+    return new Attr('stroke-dasharray', desc, '' + shape.attr('stroke-dasharray'), this.setStrokeDashArray, 'select', {options})
   },
   getRadius (shape, desc = '半径') {
     return new Attr('radius', desc, shape.attr('r'), this.setRadius, 'input')
   },
   getImgPath (shape, desc = '路径') {
     return new Attr('imgpath', desc, shape.attr('href') || shape.attr('xlink:href'), this.setImgPath, 'img')
+  },
+  setId (shapes, val) {
+    shapes.forEach(shape => {
+      let parent = shape.parent()
+      let children = parent.children()
+      let exist = children.find(item => item.attr('id') === val)
+      if (!exist) {
+        shape.attr('id', val)
+      }
+    })
   },
   setWidth (shapes, value) {
     shapes.forEach(item => {
@@ -180,11 +253,6 @@ export default {
         let scaleX = shape.transform('scaleX')
         let scaleY = shape.transform('scaleY')
         shape.scale(1, 1).rotate(parseFloat(val)).scale(scaleX, scaleY)
-        // let box = shape.bbox()
-        // let m = new SVG.Matrix(shape)
-        // let resetRotate = m.rotate()
-        // shape.transform(resetRotate)
-        // shape.transform(m.rotate(parseFloat(val) - m.extract().rotation, box.cx, box.cy))
       })
     }
   },
@@ -237,5 +305,38 @@ export default {
   },
   __toInt (val) {
     return Math.round(val.toFixed(0))
+  },
+  getSvgAttrs (svg) {
+    return [this.getSvgWidth(svg), this.getSvgHeight(svg), this.getSvgBackGround(svg), this.getSvgGridShow(svg), this.getSvgGridColor(svg)]
+  },
+  getSvgWidth (svg) {
+    return new Attr('width', '宽度', svg.width, this.setSvgWidth, 'input')
+  },
+  setSvgWidth (svg, width) {
+    svg.width = width
+  },
+  getSvgHeight (svg) {
+    return new Attr('height', '高度', svg.height, this.setSvgHeight, 'input')
+  },
+  setSvgHeight (svg, height) {
+    svg.height = height
+  },
+  getSvgBackGround (svg) {
+    return new Attr('background', '背景色', svg.backgroundColor, this.setSvgBackGround, 'color')
+  },
+  setSvgBackGround (svg, color) {
+    svg.backgroundColor = color
+  },
+  getSvgGridColor (svg) {
+    return new Attr('gridColor', '网格颜色', svg.gridColor, this.setSvgGridColor, 'color')
+  },
+  setSvgGridColor (svg, color) {
+    svg.color = color
+  },
+  getSvgGridShow (svg) {
+    return new Attr('gridShow', '网格', svg.gridShow, this.setSvgHeight, '')
+  },
+  setSvgGridShow (svg, show) {
+    svg.gridShow = show
   }
 }

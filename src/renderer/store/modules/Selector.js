@@ -1,5 +1,5 @@
 import types from '../mutations-type'
-import SVG from 'svg.js'
+// import SVG from 'svg.js'
 const state = {
   activeId: ''
 }
@@ -23,9 +23,10 @@ const actions = {
   selectShape ({commit, getters}, shape) {
     let svg = getters.svg
     if (svg) {
-      while (shape.parent() instanceof SVG.G) {
-        shape = shape.parent()
-      }
+      // commit(types.SET_ATTR_LIST, shape)
+      // while (shape.parent() instanceof SVG.G) {
+      //   shape = shape.parent()
+      // }
       commit(types.SELECT_SHAPE, {shape, svg})
     }
   },

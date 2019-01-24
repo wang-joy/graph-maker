@@ -19,23 +19,30 @@ window.addEventListener('keydown', function (e) {
   }
   let svg = store.getters.svg
   if (svg && svg.draw && svg.draw.remember('_mode') === 'select') {
-    e.preventDefault()
     if (e.ctrlKey && !e.shiftKey && e.keyCode === keyCodes.get('Z')) {
       store.dispatch('undo')
+      e.preventDefault()
     } else if (e.ctrlKey && e.shiftKey && e.keyCode === keyCodes.get('Z')) {
       store.dispatch('redo')
+      e.preventDefault()
     } else if (e.ctrlKey && !e.shiftKey && e.keyCode === keyCodes.get('C')) {
       store.dispatch('copy')
+      e.preventDefault()
     } else if (e.ctrlKey && !e.shiftKey && e.keyCode === keyCodes.get('V')) {
       store.dispatch('paste')
+      e.preventDefault()
     } else if (e.ctrlKey && !e.shiftKey && e.keyCode === keyCodes.get('X')) {
       store.dispatch('cute')
+      e.preventDefault()
     } else if (e.ctrlKey && !e.shiftKey && e.keyCode === keyCodes.get('A')) {
       store.dispatch('selectAll')
+      e.preventDefault()
     } else if (e.keyCode === keyCodes.get('Delete')) {
       store.dispatch('remove')
+      e.preventDefault()
     } else if (e.ctrlKey && !e.shiftKey && e.keyCode === keyCodes.get('I')) {
       store.dispatch('invertSelect')
+      e.preventDefault()
     }
   }
 })

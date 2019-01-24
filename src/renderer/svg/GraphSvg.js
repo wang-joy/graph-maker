@@ -170,11 +170,11 @@ export default class GraphSvg {
     this.commandManager.undo()
   }
   copy () {
-    let shapes = this.selector.shapes
+    let shapes = this.selector.getOperShapes()
     CopyManager.copy(shapes)
   }
   cute () {
-    let shapes = this.selector.shapes
+    let shapes = this.selector.getOperShapes()
     CopyManager.cute(shapes, this)
   }
   paste () {
@@ -189,7 +189,7 @@ export default class GraphSvg {
     }
   }
   invertSelect () {
-    let shapes = this.shapeManager.shapes.filter(el => !this.selector.shapes.find(item => item === el))
+    let shapes = this.shapeManager.shapes.filter(el => !this.selector.getOperShapes().find(item => item === el))
     if (shapes.length === 0) {
       this.selector.clear()
     } else if (shapes.length === 1) {
@@ -199,7 +199,7 @@ export default class GraphSvg {
     }
   }
   alignShapes (type) {
-    const shapes = this.getSelectedShapes()
+    const shapes = this.selector.getOperShapes()
     if (shapes.length > 1) {
       const startPoints = shapes.map(element => { return {x: ShapeUtils.getBBox(element).x, y: ShapeUtils.getBBox(element).y} })
       ShapeUtils.align(shapes, type)
@@ -217,38 +217,38 @@ export default class GraphSvg {
     return this.selector.shapes
   }
   flipX () {
-    if (this.getSelectedShapes().length > 0) {
-      const cmd = new FilpXCommand(this.getSelectedShapes())
+    if (this.selector.getOperShapes().length > 0) {
+      const cmd = new FilpXCommand(this.selector.getOperShapes())
       this.commandManager.execute(cmd)
     }
   }
   flipY () {
-    if (this.getSelectedShapes().length > 0) {
-      const cmd = new FilpYCommand(this.getSelectedShapes())
+    if (this.selector.getOperShapes().length > 0) {
+      const cmd = new FilpYCommand(this.selector.getOperShapes())
       this.commandManager.execute(cmd)
     }
   }
   rotate (rotation, relative) {
-    if (this.getSelectedShapes().length > 0) {
-      const cmd = new RotateCommand(this.getSelectedShapes(), rotation, relative)
+    if (this.selector.getOperShapes().length > 0) {
+      const cmd = new RotateCommand(this.selector.getOperShapes(), rotation, relative)
       this.commandManager.execute(cmd)
     }
   }
   group () {
-    if (this.getSelectedShapes().length > 1) {
-      const cmd = new GroupCommand(this.getSelectedShapes(), this)
+    if (this.selector.getOperShapes().length > 1) {
+      const cmd = new GroupCommand(this.selector.getOperShapes(), this)
       this.commandManager.execute(cmd)
     }
   }
   ungroup () {
-    if (this.getSelectedShapes().length === 1 && ShapeUtils.getShapeType(this.getSelectedShapes()[0]) === 'group') {
-      const cmd = new UnGroupCommand(this.getSelectedShapes()[0], this)
+    if (this.selector.getOperShapes().length === 1 && ShapeUtils.getShapeType(this.selector.getOperShapes()[0]) === 'group') {
+      const cmd = new UnGroupCommand(this.selector.getOperShapes()[0], this)
       this.commandManager.execute(cmd)
     }
   }
   arrange (type) {
-    if (this.getSelectedShapes().length === 1) {
-      let shape = this.getSelectedShapes()[0]
+    if (this.selector.getOperShapes().length === 1) {
+      let shape = this.selector.getOperShapes()[0]
       let shapes = this.getChildren()
       let initIndex = shapes.indexOf(shape)
       let index = initIndex

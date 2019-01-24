@@ -13,7 +13,7 @@
                 <span class="el-menu-item-title">{{item.title}}</span>
                 <span class="el-menu-item-accesskey">{{item.accesskey}}</span>
               </el-menu-item>
-              <el-submenu v-else :key="j" :index="i + '-' +j" :class="{'divided': item.divided}">
+              <el-submenu :disabled="item.disabled" v-else :key="j" :index="i + '-' +j" :class="{'divided': item.divided}">
                 <template slot="title">{{item.title}}</template>
                 <el-menu-item
                   v-for="(subitem,k) in item.items"
@@ -159,6 +159,7 @@ export default {
             },
             {
               title: '翻转(M)',
+              disabled: true,
               items: [
                 {
                   title: '水平翻转(H)',

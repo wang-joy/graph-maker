@@ -103,11 +103,13 @@ const beforedrag = function (e) {
   const shapes = ShapeUtils.getSvg(this).selector.shapes
   const startBoxs = shapes.map(item => ShapeUtils.getBBox(item))
   e.detail.handler.startBoxs = startBoxs
+  e.detail.handler.startTransforms = shapes.map(item => item.transform())
 }
 const dragmove = function (e) {
   e.preventDefault()
   let startPoint = e.detail.handler.startPoints.point
   const startBoxs = e.detail.handler.startBoxs
+  const statrTransforms = e.detail.handler.startTransforms
   let p = e.detail.p
   const shapes = ShapeUtils.getSvg(this).selector.shapes
   startPoint = startPoint.matrixTransform(this.node.getScreenCTM())
@@ -117,7 +119,11 @@ const dragmove = function (e) {
     let newp = p.matrixTransform(item.node.getScreenCTM().inverse())
     let x = startBoxs[i].x + newp.x - newstartPoint.x
     let y = startBoxs[i].y + newp.y - newstartPoint.y
-    item.move(x, y)
+    if (item instanceof SVG.G) {
+      item.matrix(statrTransforms[i]).transform({x: newp.x - newstartPoint.x, y: newp.y - newstartPoint.y}, true)
+    } else {
+      item.move(x, y)
+    }
   })
 }
 export default {

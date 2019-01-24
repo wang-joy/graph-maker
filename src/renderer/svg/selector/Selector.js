@@ -2,16 +2,20 @@ import ShapeUtils from '@/svg/utils/shape'
 import '@/svg/plugins/select'
 import 'svg.draggable.js'
 import 'svg.select.js/dist/svg.select.css'
+import SVG from 'svg.js'
 class Selector {
   constructor () {
     this.shapes = []
   }
   select (shape) {
     this.clear()
+    this.shapes.push(shape)
+    while (shape.parent() instanceof SVG.G) {
+      shape = shape.parent()
+    }
     shape.selectize(true, {deepSelect: ShapeUtils.deepSelect(shape)})
     shape.fire('select')
     shape.draggable()
-    this.shapes.push(shape)
   }
   clear () {
     this.shapes.forEach(el => {
@@ -44,6 +48,14 @@ class Selector {
       this.shapes.push(shape)
       this.shapes.forEach(item => item.remember('multiSelect', true))
     }
+  }
+  getOperShapes () {
+    return this.shapes.map(item => {
+      while (item.parent() instanceof SVG.G) {
+        item = item.parent()
+      }
+      return item
+    })
   }
 }
 export default Selector

@@ -1,12 +1,13 @@
 <template>
   <div class="graph-center" :style="{height: workHeight + 'px' }">
-    <el-tabs type="border-card" class="my-tabs" closable v-model="val" @tab-remove="remove" :style="{height: workHeight - 2+ 'px' }" @tab-click='click'>
+    <el-tabs type="border-card" class="my-tabs" closable :value="val" @tab-remove="remove" :style="{height: workHeight - 2+ 'px' }" @tab-click="click">
       <el-tab-pane
         v-for="item of tabs"
         :name="item.name"
         :label="item.label"
         :key="item.name"
-        class="my-tab-pane" lazy>
+        class="my-tab-pane"
+        lazy>
         <graph-work-area :id="item.name"></graph-work-area>
       </el-tab-pane>
     </el-tabs>
@@ -32,7 +33,6 @@ export default {
         return this.$store.state.active
       },
       set (val) {
-        this.$store.dispatch('setActive', val)
       }
     },
     ...mapGetters(['workHeight'])
@@ -41,7 +41,10 @@ export default {
     ...mapActions({
       remove: 'removeSvg'
     }),
-    click () {
+    click (tab) {
+      this.$nextTick(() => {
+        this.$store.dispatch('setActive', tab.name)
+      })
     }
   }
 

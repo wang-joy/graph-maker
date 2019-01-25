@@ -13,11 +13,10 @@
 <script>
 import {mapMutations, mapGetters, mapActions} from 'vuex'
 import types from '../store/mutations-type'
-import VJstree from 'vue-jstree'
 import GraphTree from './righter/GraphTree'
 import GraphAttr from './righter/GraphAttr'
 export default {
-  components: {VJstree, GraphTree, GraphAttr},
+  components: {GraphTree, GraphAttr},
   methods: {
     ...mapMutations({setWidth: types.SET_RIGHTER_WIDTH}),
     ...mapActions(['select'])

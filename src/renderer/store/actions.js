@@ -12,13 +12,16 @@ export default {
   setActive ({commit}, playload) {
     commit(types.SET_ACTIVE_ID, playload)
   },
-  removeSvg ({commit}, id) {
+  removeSvg ({commit, rootState}, id) {
     commit(types.REMOVE_SVG, id)
   },
-  saveSvg ({commit}, id) {
+  saveSvg ({commit, getters, rootState}, id) {
+    if (typeof id === 'undefined') {
+      id = rootState.active
+    }
     commit(types.SAVE_SVG, id)
   },
-  saveAsSvg ({commit}) {
+  saveAsSvg ({commit, getters}) {
     commit(types.SAVE_AS_SVG)
   },
   initList ({commit, getters}) {
@@ -60,12 +63,14 @@ export default {
     let svg = getters.svg
     if (svg) {
       commit(types.REDO, svg)
+      commit(types.SVG_CHANGE, {val: true})
     }
   },
   undo ({commit, getters}) {
     let svg = getters.svg
     if (svg) {
       commit(types.UNDO, svg)
+      commit(types.SVG_CHANGE, {val: true})
     }
   },
   copy ({commit, getters}) {
@@ -78,18 +83,21 @@ export default {
     let svg = getters.svg
     if (svg) {
       commit(types.CUTE, svg)
+      commit(types.SVG_CHANGE, {val: true})
     }
   },
   paste ({commit, getters}) {
     let svg = getters.svg
     if (svg) {
       commit(types.PASTE, svg)
+      commit(types.SVG_CHANGE, {val: true})
     }
   },
   remove ({commit, getters}) {
     let svg = getters.svg
     if (svg) {
       commit(types.REMOVE_SHAPES, svg)
+      commit(types.SVG_CHANGE, {val: true})
     }
   },
   selectAll ({commit, getters, rootState}) {
@@ -108,42 +116,52 @@ export default {
     const svg = getters.svg
     if (svg) {
       commit(types.ALIGN_SHAPES, {svg, type})
+      commit(types.SVG_CHANGE, {val: true})
     }
   },
   flipX ({commit, getters}) {
     const svg = getters.svg
     if (svg) {
       commit(types.FLIP_X, svg)
+      commit(types.SVG_CHANGE, {val: true})
     }
   },
   flipY ({commit, getters}) {
     const svg = getters.svg
     if (svg) {
       commit(types.FLIP_Y, svg)
+      commit(types.SVG_CHANGE, {val: true})
     }
   },
   rotate ({commit, getters}, {rotation, relative}) {
     const svg = getters.svg
     if (svg) {
       commit(types.ROTATE, {svg, rotation, relative})
+      commit(types.SVG_CHANGE, {val: true})
     }
   },
   group ({commit, getters}) {
     const svg = getters.svg
     if (svg) {
       commit(types.GROUP, svg)
+      commit(types.SVG_CHANGE, {val: true})
     }
   },
   ungroup ({commit, getters}) {
     const svg = getters.svg
     if (svg) {
       commit(types.UNGROUP, svg)
+      commit(types.SVG_CHANGE, {val: true})
     }
   },
   arrange ({commit, getters}, type) {
     const svg = getters.svg
     if (svg) {
       commit(types.ARRANGE, {svg, type})
+      commit(types.SVG_CHANGE, {val: true})
     }
+  },
+  svgChange ({commit, getters}, id) {
+    commit(types.SVG_CHANGE, {val: true})
   }
 }

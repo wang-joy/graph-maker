@@ -8,7 +8,8 @@ const mutations = {
     SvgManager.create(id)
     state.list.push({
       name: id,
-      new: true,
+      isNew: true,
+      changed: false,
       label: 'New File'
     })
   },
@@ -16,6 +17,15 @@ const mutations = {
     state.active = id
   },
   [types.REMOVE_SVG] (state, id) {
+    let tab = state.list.find(el => el.name === id)
+    if (tab.isNew || tab.changed) {
+      if (confirm('该文件尚未保存, 是否保存该文件')) {
+        let svg = SvgManager.getById(id)
+        if (svg) {
+          svg.save()
+        }
+      }
+    }
     SvgManager.remove(id)
     let list = state.list
     let active = state.active
@@ -30,11 +40,9 @@ const mutations = {
       })
     }
     state.list = list.filter(el => el.name !== id)
+    state.active = state.list.length > 0 ? state.active : '-1'
   },
   [types.SAVE_SVG] (state, id) {
-    if (typeof id === 'undefined') {
-      id = state.active
-    }
     let svg = SvgManager.getById(id)
     if (svg) {
       svg.save()
@@ -42,6 +50,8 @@ const mutations = {
       let index = state.list.indexOf(tab)
       tab.label = svg.label
       tab.filePath = svg.filePath
+      tab.changed = svg.isChanged
+      tab.isNew = svg.isNew
       state.list.splice(index, 1, tab)
     }
   },
@@ -51,6 +61,8 @@ const mutations = {
     if (svg) {
       svg.saveAs()
       let tab = state.list.find(el => el.name === id)
+      tab.changed = svg.isChanged
+      tab.isNew = svg.isNew
       let index = state.list.indexOf(tab)
       tab.label = svg.label
       tab.filePath = svg.filePath
@@ -61,14 +73,17 @@ const mutations = {
     state.list = list
   },
   [types.SET_FILE_HISTORY] (state) {
-    let svgs = SvgManager.svgs
+    let tabs = state.list
     let files = []
-    svgs.forEach(svg => {
-      if (confirm(`是否保存${svg.label}`)) {
-        svg.save()
+    tabs.forEach(tab => {
+      let svg = SvgManager.getById(tab.name)
+      if (tab.isNew || tab.changed) {
+        if (confirm(`是否保存${svg.label}`)) {
+          svg.save()
+        }
       }
       let filePath = svg.filePath
-      if (path) {
+      if (filePath) {
         files.push(filePath)
       }
     })
@@ -80,6 +95,8 @@ const mutations = {
     let tab = {
       label: path.basename(file, path.extname(file)),
       name: svg.id,
+      changed: false,
+      isNew: false,
       filePath: file
     }
     state.list.push(tab)
@@ -128,6 +145,28 @@ const mutations = {
   },
   [types.ARRANGE] (state, {svg, type}) {
     svg.arrange(type)
+  },
+  [types.SVG_CHANGE] (state, {id, val}) {
+    if (typeof id === 'undefined') {
+      id = state.active
+    }
+    let tab = state.list.find(el => el.name === id)
+    if (tab) {
+      let svg = SvgManager.getById(id)
+      tab.changed = val
+      let index = state.list.indexOf(tab)
+      state.list.splice(index, 1, tab)
+      svg.isChanged = val
+    }
+  },
+  [types.SVG_NEW] (state, {id, val}) {
+    let tab = state.list.find(el => el.name === id)
+    if (tab) {
+      let svg = SvgManager.getById(id)
+      tab.isNew = svg.isNew
+      let index = state.list.indexOf(tab)
+      state.list.splice(index, 1, tab)
+    }
   }
 }
 export default mutations

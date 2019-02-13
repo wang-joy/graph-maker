@@ -28,6 +28,7 @@ const mousedown = function (e) {
   }
 }
 const drawstart = function (e) {
+  store.dispatch('svgChange')
   if (!ShapeUtils.deepSelect(this)) {
     store.dispatch('selectShape', this)
   }
@@ -53,6 +54,7 @@ const imgLoaded = function () {
   store.dispatch('selectShape', this)
 }
 const dragend = function ({detail}) {
+  store.dispatch('svgChange')
   let startPoint = detail.handler.startPoints.point
   let endPoint = detail.p
   if (Math.abs(startPoint.x - endPoint.x) >= 1 || Math.abs(startPoint.y - endPoint.y) >= 1) {
@@ -70,6 +72,7 @@ const dragend = function ({detail}) {
   }
 }
 const resizedone = function ({detail}) {
+  store.dispatch('svgChange')
   let dx = detail.dx
   let dy = detail.dy
   if (Math.abs(dx) > 0 || Math.abs(dy) > 0) {

@@ -29,7 +29,7 @@ export default class GraphSvg {
   gridColor = '#CCCCCC'
   backgroundColor = '#FFFFFF'
   isNew = true
-  isChange = true
+  isChanged = true
   cursor = new Cursor(0, 0)
   label = 'New File'
   filePath
@@ -90,10 +90,10 @@ export default class GraphSvg {
   save () {
     if (this.isNew) {
       this.saveAs()
-    } else if (this.isChange) {
+    } else if (this.isChanged) {
       let filepath = this.filePath
       this.__writeFile(filepath)
-      // this.isChange = false
+      this.isChanged = false
     }
   }
   __writeFile (fileName) {
@@ -112,6 +112,7 @@ export default class GraphSvg {
         this.filePath = fileName
         this.label = path.basename(fileName, path.extname(fileName))
         this.isNew = false
+        this.isChanged = false
       } catch (error) {
         throw error
       }

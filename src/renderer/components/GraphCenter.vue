@@ -4,10 +4,10 @@
       <el-tab-pane
         v-for="item of tabs"
         :name="item.name"
-        :label="item.label"
         :key="item.name"
         class="my-tab-pane"
         lazy>
+        <span slot="label">{{item.label}} <i v-show="item.changed">*</i></span>
         <graph-work-area :id="item.name"></graph-work-area>
       </el-tab-pane>
     </el-tabs>

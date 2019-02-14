@@ -3,6 +3,7 @@ import shapes from '@/svg/shape/index'
 import GraphMask from '@/svg/GraphMask'
 import '@/svg/plugins/draw'
 import ShapeUtils from '@/svg/utils/shape'
+// import store from '@/store'
 const mousemove = function (e) {
   let point = this.point(e.clientX, e.clientY)
   let svg = this.remember('_svg')
@@ -28,6 +29,7 @@ const mousedown = function (e) {
       if (left) {
         let selector = this.remember('_svg').selector
         selector.clear()
+        __drawSelector(e, this)
       }
       break
   }
@@ -51,6 +53,29 @@ function __drawend (e, shape) {
   } else {
     shape.draw('stop')
   }
+}
+const __drawSelector = (e, svg) => {
+  const area = svg.rect().attr({
+    fill: 'blue',
+    opacity: 0.5
+  })
+  area.draw(e)
+  svg.on('mouseup.drawselector', function (e) {
+    area.draw(e)
+    if (area.width() === 0 && area.height() === 0) {
+      area.remove()
+      return
+    }
+    const graphSvg = this.remember('_svg')
+    __select(graphSvg, area)
+    area.remove()
+    this.off('mouseup.drawselector')
+  })
+}
+const __select = function (svg, area) {
+  const shapeManager = svg.shapeManager
+  const shapes = shapeManager.shapes.filter(item => ShapeUtils.isRboxIntersect(area, item))
+  svg.selector.multiSelect(shapes)
 }
 export default {
   mousemove,

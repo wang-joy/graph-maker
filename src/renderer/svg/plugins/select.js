@@ -106,17 +106,16 @@ SelectHandler.prototype.init = function (value, options) {
   var scaleY = this.el.transform('scaleY')
   var m = new SVG.Matrix(this.el).translate(bbox.x, bbox.y)
   this.nested.matrix(m.scale(1/scaleX, 1/scaleY))
-
+  var type = this.el.attr('type') || this.el.type
   // When deepSelect is enabled and the element is a line/polyline/polygon, draw only points for moving
-  if (this.options.deepSelect && ['line', 'polyline', 'polygon'].indexOf(this.el.type) !== -1) {
+  if (this.options.deepSelect && ['line', 'polyline', 'polygon', 'curve', 'arc', 'sector', 'arch'].indexOf(type) !== -1) {
     this.selectPoints(value)
-  } else if (this.options.deepSelect && this.el.attr('type') === 'curve') {
-    this.selectPoints(value)
-    this.selectLines(value)
   } else {
     this.selectRect(value)
   }
-
+  if (type === 'curve') {
+    this.selectLines(value)
+  }
   this.observe()
   this.cleanup()
 }
@@ -165,7 +164,8 @@ SelectHandler.prototype.selectPoints = function (value) {
 // create the point-array which contains the 2 points of a line or simply the points-array of polyline/polygon
 SelectHandler.prototype.getPointArray = function () {
   var bbox = this.el.bbox()
-  var array = this.el.attr('type') === 'curve' ? this.el.getPoints() : this.el.array().valueOf()
+  let type = this.el.attr('type')
+  var array = type === 'curve' || type === 'arc' || type === 'sector' || type === 'arch' ? this.el.getPoints() : this.el.array().valueOf()
   return array.map(function (el) {
     return [el[0] - bbox.x, el[1] - bbox.y]
   })

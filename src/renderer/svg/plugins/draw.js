@@ -1,27 +1,50 @@
 import SVG from 'svg.js'
 import 'svg.draw.js'
+import './svg.math.js'
 SVG.Element.prototype.draw.extend('path', {
   init: function (e) {
     var p = this.startPoint
-    if (this.el.attr('type') === 'curve') {
+    const type = this.el.attr('type')
+    if (type === 'curve') {
       this.initCurve(p)
+    } else if (type === 'arc' || type === 'arch') {
+      this.initArc(p)
+    } else if (type === 'sector') {
+      this.initSector(p)
     }
   },
   calc: function (e) {
-    if (this.el.attr('type') === 'curve') {
+    const type = this.el.attr('type')
+    if (type === 'curve') {
       this.calcCurve(e)
+    } else if (type === 'arc' || type === 'arch') {
+      this.calcArc(e)
+    } else if (type === 'sector') {
+      this.calcSector(e)
     }
   },
   point: function (e) {
-    if (this.el.attr('type') === 'curve') {
+    const type = this.el.attr('type')
+    if (type === 'curve') {
       this.pointCurve(e)
+      return
+    } else if (type === 'arc' || type === 'arch') {
+      this.pointArc(e)
+      return
+    } else if (type === 'sector') {
+      this.pointSector(e)
       return
     }
     this.stop(e)
   },
   clean: function () {
-    if (this.el.attr('type') === 'curve') {
+    const type = this.el.attr('type')
+    if (type === 'curve') {
       this.cleanCurve()
+    } else if (type === 'arc' || type === 'arch') {
+      this.cleanArc()
+    } else if (type === 'sector') {
+      this.cleanSector()
     }
   },
   drawCircle: function (cx, cy) {
@@ -136,7 +159,128 @@ SVG.Element.prototype.draw.extend('path', {
     arr2.forEach(function (item) { arr.push(item) })
     this.el.plot(arr)
     this.el.fire('drawpoint', {event: e, p: {x: p.x, y: p.y}, m: this.m})
-  }
+  },
+  initArc: function (p) {
+    this.set = new SVG.Set()
+    this.n = 0
+    this.cp = [p.x, p.y]
+    this.drawCircle(this.cp[0], this.cp[1])
+    let arr = [['M', p.x, p.y]]
+    this.el.plot(arr)
+  },
+  calcArc: function (e) {
+    if (e) {
+      let p = this.transformPoint(e.clientX, e.clientY)
+      let snap = this.snapToGrid([p.x, p.y])
+      let arr = this.el.array().valueOf()
+      if (this.n === 1) {
+        let r = arr[1][1]
+        let p1 = new SVG.math.Point(arr[0][1], arr[0][2])
+        let p2 = new SVG.math.Point(snap[0], snap[1])
+        let p3 = new SVG.math.Point(this.cp[0], this.cp[1])
+        let angle = SVG.math.angle(p3,p2)
+        let deg1 = SVG.math.deg(angle)
+        let deg2 = SVG.math.deg(SVG.math.angle(p3,p1))
+        let deg = deg1 - deg2
+        if(deg<0) {
+          deg = 360 + deg
+        }
+        if(deg<180) {
+          arr[1][4] = 0
+        } else {
+          arr[1][4] = 1
+        }
+        arr[1][6] = p3.x + Math.cos(angle)*r
+        arr[1][7] = p3.y + Math.sin(angle)*r
+        this.el.plot(arr)
+      }
+    }
+  },
+  pointArc: function (e) {
+    if (this.n === 0) {
+      this.n++
+      let p = this.transformPoint(e.clientX, e.clientY)
+      let snap = this.snapToGrid([p.x, p.y])
+      let arr = this.el.array().valueOf()
+      let r = Math.sqrt(Math.pow(this.cp[0]-snap[0],2)+Math.pow(this.cp[1]-snap[1],2))
+      let m = ['M', snap[0], [snap[1]]]
+      let a = ['A', r,r,0,1,1,snap[0], snap[1]]
+      arr.splice(0,1,m,a)
+      if (this.el.attr('type') === 'arch') {
+        arr.push(['Z'])
+      }
+      this.el.plot(arr)
+      this.drawCircle(snap[0], snap[1])
+    }
+  },
+  cleanArc: function (){
+    this.set.each(function () {
+        this.remove()
+    })
+    this.set.clear()
+    delete this.set
+  },
+  initSector: function (p) {
+    this.set = new SVG.Set()
+    this.n = 0
+    this.cp = [p.x, p.y]
+    this.drawCircle(this.cp[0], this.cp[1])
+    let arr = [['M', p.x, p.y], ['L', p.x, p.y], ['Z']]
+    this.el.plot(arr)
+  },
+  calcSector: function (e) {
+    if (e) {
+      let p = this.transformPoint(e.clientX, e.clientY)
+      let snap = this.snapToGrid([p.x, p.y])
+      let arr = this.el.array().valueOf()
+      if (this.n === 0) {
+        arr[1][1] = snap[0]
+        arr[1][2] = snap[1]
+      } else if (this.n === 1) {
+        let r = arr[2][1]
+        let p1 = new SVG.math.Point(arr[1][1], arr[1][2])
+        let p2 = new SVG.math.Point(snap[0], snap[1])
+        let p3 = new SVG.math.Point(this.cp[0], this.cp[1])
+        let angle = SVG.math.angle(p3,p2)
+        let deg1 = SVG.math.deg(angle)
+        let deg2 = SVG.math.deg(SVG.math.angle(p3,p1))
+        let deg = deg1 - deg2
+        if(deg<0) {
+          deg = 360 + deg
+        }
+        if(deg<180) {
+          arr[2][4] = 0
+        } else {
+          arr[2][4] = 1
+        }
+        arr[2][6] = p3.x + Math.cos(angle)*r
+        arr[2][7] = p3.y + Math.sin(angle)*r
+      }
+      this.el.plot(arr)
+    }
+  },
+  pointSector: function (e) {
+    if (this.n === 0) {
+      this.n++
+      let p = this.transformPoint(e.clientX, e.clientY)
+      let snap = this.snapToGrid([p.x, p.y])
+      let arr = this.el.array().valueOf()
+      let r = Math.sqrt(Math.pow(this.cp[0]-snap[0],2)+Math.pow(this.cp[1]-snap[1],2))
+      let l = ['L', snap[0], [snap[1]]]
+      let a = ['A', r,r,0,1,1,snap[0], snap[1]]
+      // arr.pop()
+      arr.splice(1,1,l,a)
+      this.el.plot(arr)
+      this.drawCircle(snap[0], snap[1])
+    }
+  },
+  cleanSector: function (){
+    this.set.each(function () {
+        this.remove()
+    })
+    this.set.clear()
+    delete this.set
+  },
 })
 SVG.Element.prototype.draw.extend('ellipse', {
     

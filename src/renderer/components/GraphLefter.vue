@@ -10,6 +10,7 @@
           <a v-for="(item, index) in shape.list"
             :key="index"
             @click.capture="createShape(item.type)"
+            :title="item.desc"
             class="shape">
             <graph-icon :type="item.icon"></graph-icon>
           </a>
@@ -87,12 +88,12 @@ export default {
               icon: 'huxian'
             },
             {
-              type: 'arc',
+              type: 'sector',
               desc: '扇形',
               icon: 'shanxing'
             },
             {
-              type: 'arc',
+              type: 'arch',
               desc: '弓形',
               icon: 'gong'
             }

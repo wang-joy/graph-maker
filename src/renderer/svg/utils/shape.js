@@ -10,7 +10,8 @@ export default {
     return shape && (this.getShapeType(shape) === 'polyline')
   },
   deepSelect (shape) {
-    return (!!shape) && (this.getShapeType(shape) === 'polyline' || this.getShapeType(shape) === 'polygon' || this.getShapeType(shape) === 'line' || this.getShapeType(shape) === 'curve')
+    let type = this.getShapeType(shape)
+    return (!!shape) && (type === 'polyline' || type === 'polygon' || type === 'line' || type === 'curve' || type === 'arc' || type === 'sector' || type === 'arch')
   },
   getSvg (shape) {
     return shape.doc().remember('_svg')
@@ -184,5 +185,14 @@ export default {
     shapes.forEach(item => {
       item.transform({scaleX: -1}, true)
     })
+  },
+  isRboxIntersect (shape1, shape2) {
+    var rbox1 = shape1.rbox()
+    var rbox2 = shape2.rbox()
+    if (rbox1.x2 < rbox2.x || rbox2.x2 < rbox1.x || rbox1.y2 < rbox2.y || rbox2.y2 < rbox1.y) {
+      return false
+    } else {
+      return true
+    }
   }
 }

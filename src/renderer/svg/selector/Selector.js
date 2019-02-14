@@ -13,6 +13,7 @@ class Selector {
     while (shape.parent() instanceof SVG.G) {
       shape = shape.parent()
     }
+    // console.log(ShapeUtils.deepSelect(shape))
     shape.selectize(true, {deepSelect: ShapeUtils.deepSelect(shape)})
     shape.fire('select')
     shape.draggable()

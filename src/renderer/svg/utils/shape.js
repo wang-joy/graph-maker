@@ -2,6 +2,7 @@ import ShapeEvts from '@/svg/evts/ShapeEvts'
 import SVG from 'svg.js'
 import path from 'path'
 import fs from 'fs'
+import '@/svg/plugins/svg.math.js'
 export default {
   getShapeType (shape) {
     return shape.attr('type') || shape.type
@@ -194,5 +195,97 @@ export default {
     } else {
       return true
     }
+  },
+  arcToCenterParam (x1, y1, rx, ry, phi, fA, fS, x2, y2) {
+    rx = Math.abs(rx)
+    ry = Math.abs(ry)
+    if (rx === 0 || ry === 0) {
+      throw Error('rx and ry can note 0')
+    }
+    let sinPhi = Math.sin(phi)
+    let cosPhi = Math.cos(phi)
+    let hdX = (x1 - x2) / 2.0
+    let hdY = (y1 - y2) / 2.0
+    let hsX = (x1 + x2) / 2.0
+    let hsY = (y1 + y2) / 2.0
+
+    let x11 = cosPhi * hdX + sinPhi * hdY
+    let y11 = cosPhi * hdY - sinPhi * hdX
+
+    let lambda = Math.pow(x11, 2) / Math.pow(rx, 2) + Math.pow(y11, 2) / Math.pow(ry, 2)
+
+    if (lambda > 1) {
+      rx = rx * Math.sqrt(lambda)
+      ry = ry * Math.sqrt(lambda)
+    }
+
+    let rxry = rx * ry
+    let rxy11 = rx * y11
+    let ryx11 = ry * x11
+    let sum = rxy11 * rxy11 + ryx11 * ryx11
+    if (!sum) {
+      throw Error('start point can not be same as end point')
+    }
+    var coe = Math.sqrt(Math.abs((rxry * rxry - sum) / sum))
+    if (fA !== fS) { coe = -coe }
+    let tempCx = coe * rxy11 / ry
+    let tempCy = -coe * ryx11 / rx
+    let cx = cosPhi * tempCx - sinPhi * tempCy + hsX
+    let cy = sinPhi * tempCx + cosPhi * tempCy + hsY
+    let xcr1 = (x11 - tempCx) / rx
+    let xcr2 = (x11 + tempCx) / rx
+    let ycr1 = (y11 - tempCy) / ry
+    let ycr2 = (y11 + tempCy) / ry
+    let startAngle = this.radian(1, 0, xcr1, ycr1)
+    let deltaAngle = this.radian(xcr1, ycr1, -xcr2, -ycr2)
+    const PIX2 = Math.PI * 2
+    while (deltaAngle > PIX2) {
+      deltaAngle -= PIX2
+    }
+    while (deltaAngle < 0.0) {
+      deltaAngle += PIX2
+    }
+    if (fS === 0) { deltaAngle -= PIX2 }
+    let endAngle = startAngle + deltaAngle
+    while (endAngle > PIX2) { endAngle -= PIX2 }
+    while (endAngle < 0.0) { endAngle += PIX2 }
+    return {
+      cx: cx,
+      cy: cy,
+      startAngle: startAngle,
+      endAngle: endAngle,
+      deltaAngle: deltaAngle,
+      clockwise: fs === 1
+    }
+  },
+  radian (ux, uy, vx, vy) {
+    let dot = ux * vx + uy * vy
+    let mod = Math.sqrt((ux * ux + uy * uy) * (vx * vx + vy * vy))
+    let rad = Math.acos(dot / mod)
+    if (ux * vy - uy * vx < 0.0) {
+      rad = -rad
+    }
+    return rad
+  },
+  getDeg (points) {
+    let p1 = new SVG.math.Point(points[1][0], points[1][1])
+    let p2 = new SVG.math.Point(points[2][0], points[2][1])
+    let p3 = new SVG.math.Point(points[0][0], points[0][1])
+    let angle = SVG.math.angle(p3, p2)
+    let deg1 = SVG.math.deg(angle)
+    let deg2 = SVG.math.deg(SVG.math.angle(p3, p1))
+    let deg = deg1 - deg2
+    return deg
+  },
+  getDeltaAngle (start, end, center, r) {
+    let tempX = (start.x - end.x) / 2
+    let tempY = (start.y - end.y) / 2
+    let tempCx = center.x - (start.x + end.x) / 2
+    let tempCy = center.y - (start.y + end.y) / 2
+    let xcr1 = (tempX - tempCx) / r
+    let xcr2 = (tempX + tempCx) / r
+    let ycr1 = (tempY - tempCy) / r
+    let ycr2 = (tempY + tempCy) / r
+    return this.radian(xcr1, ycr1, -xcr2, -ycr2)
   }
 }

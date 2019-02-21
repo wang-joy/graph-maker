@@ -1,5 +1,6 @@
 import SVG from 'svg.js'
 import ArcAttr from './attr/arc'
+import ShapeUtils from '@/svg/utils/shape'
 SVG.Arc = SVG.invent({
   // Define the type of element that should be created
   create: 'path',
@@ -49,33 +50,69 @@ SVG.Arc = SVG.invent({
       let ry = arr[1][2]
       const fA = arr[1][3]
       const fS = arr[1][4]
-      const sinPhi = Math.sign(phi)
-      const cosPhi = Math.cos(phi)
-      const hdX = (startPoint.x - endPoint.x) / 2.0
-      const hdY = (startPoint.y - endPoint.y) / 2.0
-      const hsX = (startPoint.x + endPoint.x) / 2.0
-      const hsY = (startPoint.y + endPoint.y) / 2.0
-      const x1 = cosPhi * hdX + sinPhi * hdY
-      const y1 = cosPhi * hdY - sinPhi * hdX
-      const lambda = (x1 * x1) / (rx * rx) + (y1 * y1) / (ry * ry)
-      if (lambda > 1) {
-        rx = rx * Math.sqrt(lambda)
-        ry = ry * Math.sqrt(lambda)
+      let params = ShapeUtils.arcToCenterParam(startPoint.x, startPoint.y, rx, ry, phi, fA, fS, endPoint.x, endPoint.y)
+      return {x: params.cx, y: params.cy}
+    },
+    setCenterPoint (point) {
+      const arr = this.array().valueOf()
+      const r = Math.sqrt(Math.pow(point.x - arr[0][1], 2) + Math.pow(point.y - arr[0][2], 2))
+      arr[1][1] = arr[1][2] = r
+      let startPoint = {x: arr[0][1], y: arr[0][2]}
+      let endPoint = {x: arr[1][6], y: arr[1][7]}
+      let points = [[point.x, point.y], [startPoint.x, startPoint.y], [endPoint.x, endPoint.y]]
+      let deg = ShapeUtils.getDeg(points)
+      while (deg < 0) {
+        deg += 360
       }
-      let rxry = rx * ry
-      let rxy1 = rx * y1
-      let ryx1 = ry * x1
-      let sumSq = rxy1 * rxy1 + ryx1 * ryx1
-      if (!sumSq) {
-        throw Error('start point can not be same as end point')
+      if (deg < 180) {
+        arr[1][4] = 0
+      } else {
+        arr[1][4] = 1
       }
-      let coe = Math.sqrt(Math.abs((rxry * rxry - sumSq) / sumSq))
-      if (fA !== fS) {
-        coe = -coe
+      this.plot(arr)
+    },
+    setStartPoint (point) {
+      const arr = this.array().valueOf()
+      arr[0][1] = point.x
+      arr[0][2] = point.y
+      this.plot(arr)
+      let centerPoint = this.centerPoint()
+      let endPoint = {x: arr[1][6], y: arr[1][7]}
+      let points = [[centerPoint.x, centerPoint.y], [point.x, point.y], [endPoint.x, endPoint.y]]
+      let deg = ShapeUtils.getDeg(points)
+      let r = Math.sqrt(Math.pow(endPoint.x - centerPoint.x, 2) + Math.pow(endPoint.y - centerPoint.y, 2))
+      arr[1][1] = arr[1][2] = r
+      while (deg < 0) {
+        deg += 360
       }
-      let cx = coe * rxy1 / ry
-      let cy = -coe * ryx1 / rx
-      return {x: cosPhi * cx - sinPhi * cy + hsX, y: sinPhi * cx + cosPhi * cy + hsY}
+      if (deg < 180) {
+        arr[1][4] = 0
+      } else {
+        arr[1][4] = 1
+      }
+      this.plot(arr)
+    },
+    setEndPoint (point) {
+      const arr = this.array().valueOf()
+      arr[1][6] = point.x
+      arr[1][7] = point.y
+      this.plot(arr)
+      let centerPoint = this.centerPoint()
+      let startPoint = {x: arr[0][1], y: arr[0][2]}
+      let endPoint = {x: arr[1][6], y: arr[1][7]}
+      let points = [[centerPoint.x, centerPoint.y], [startPoint.x, startPoint.y], [endPoint.x, endPoint.y]]
+      let deg = ShapeUtils.getDeg(points)
+      let r = Math.sqrt(Math.pow(endPoint.x - centerPoint.x, 2) + Math.pow(endPoint.y - centerPoint.y, 2))
+      arr[1][1] = arr[1][2] = r
+      while (deg < 0) {
+        deg += 360
+      }
+      if (deg < 180) {
+        arr[1][4] = 0
+      } else {
+        arr[1][4] = 1
+      }
+      this.plot(arr)
     }
   },
   // Add method to parent elements

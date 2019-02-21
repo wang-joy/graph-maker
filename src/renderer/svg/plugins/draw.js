@@ -1,6 +1,7 @@
 import SVG from 'svg.js'
 import 'svg.draw.js'
 import './svg.math.js'
+import ShapeUtils from '@/svg/utils/shape'
 SVG.Element.prototype.draw.extend('path', {
   init: function (e) {
     var p = this.startPoint
@@ -175,14 +176,12 @@ SVG.Element.prototype.draw.extend('path', {
       let arr = this.el.array().valueOf()
       if (this.n === 1) {
         let r = arr[1][1]
-        let p1 = new SVG.math.Point(arr[0][1], arr[0][2])
-        let p2 = new SVG.math.Point(snap[0], snap[1])
-        let p3 = new SVG.math.Point(this.cp[0], this.cp[1])
-        let angle = SVG.math.angle(p3,p2)
-        let deg1 = SVG.math.deg(angle)
-        let deg2 = SVG.math.deg(SVG.math.angle(p3,p1))
-        let deg = deg1 - deg2
-        if(deg<0) {
+        // let p = new SVG.math.Point(this.cp[0], this.cp[1])
+        let p1 = new SVG.math.Point(snap[0], snap[1])
+        let p2 = new SVG.math.Point(this.cp[0], this.cp[1])
+        let angle = SVG.math.angle(p2,p1)
+        let deg = ShapeUtils.getDeg([[this.cp[0], this.cp[1]], [arr[0][1], arr[0][2]], [snap[0], snap[1]]])
+        if (deg < 0) {
           deg = 360 + deg
         }
         if(deg<180) {
@@ -190,8 +189,8 @@ SVG.Element.prototype.draw.extend('path', {
         } else {
           arr[1][4] = 1
         }
-        arr[1][6] = p3.x + Math.cos(angle)*r
-        arr[1][7] = p3.y + Math.sin(angle)*r
+        arr[1][6] = p2.x + Math.cos(angle)*r
+        arr[1][7] = p2.y + Math.sin(angle)*r
         this.el.plot(arr)
       }
     }
@@ -211,6 +210,8 @@ SVG.Element.prototype.draw.extend('path', {
       }
       this.el.plot(arr)
       this.drawCircle(snap[0], snap[1])
+    } else if (this.n === 1){
+      this.stop(e)
     }
   },
   cleanArc: function (){
@@ -238,14 +239,11 @@ SVG.Element.prototype.draw.extend('path', {
         arr[1][2] = snap[1]
       } else if (this.n === 1) {
         let r = arr[2][1]
-        let p1 = new SVG.math.Point(arr[1][1], arr[1][2])
-        let p2 = new SVG.math.Point(snap[0], snap[1])
-        let p3 = new SVG.math.Point(this.cp[0], this.cp[1])
-        let angle = SVG.math.angle(p3,p2)
-        let deg1 = SVG.math.deg(angle)
-        let deg2 = SVG.math.deg(SVG.math.angle(p3,p1))
-        let deg = deg1 - deg2
-        if(deg<0) {
+        let p1 = new SVG.math.Point(snap[0], snap[1])
+        let p2 = new SVG.math.Point(this.cp[0], this.cp[1])
+        let angle = SVG.math.angle(p2,p1)
+        let deg = ShapeUtils.getDeg([[this.cp[0], this.cp[1]], [arr[1][1], arr[1][2]], [snap[0], snap[1]]])
+        if (deg < 0) {
           deg = 360 + deg
         }
         if(deg<180) {
@@ -253,8 +251,8 @@ SVG.Element.prototype.draw.extend('path', {
         } else {
           arr[2][4] = 1
         }
-        arr[2][6] = p3.x + Math.cos(angle)*r
-        arr[2][7] = p3.y + Math.sin(angle)*r
+        arr[2][6] = p2.x + Math.cos(angle)*r
+        arr[2][7] = p2.y + Math.sin(angle)*r
       }
       this.el.plot(arr)
     }
@@ -272,6 +270,8 @@ SVG.Element.prototype.draw.extend('path', {
       arr.splice(1,1,l,a)
       this.el.plot(arr)
       this.drawCircle(snap[0], snap[1])
+    } else if (this.n === 1) {
+      this.stop(e)
     }
   },
   cleanSector: function (){

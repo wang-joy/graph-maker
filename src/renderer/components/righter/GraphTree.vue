@@ -14,57 +14,37 @@ export default {
       let shapes = []
       if (this.svg) {
         let svg = this.svg
-        let count = 0
-        let treeNode = {title: svg.label, id: count, expand: true, type: 'svg'}
-        let shape = {id: count, el: this.svg}
-        if (this.selected.length === 0) {
+        let treeNode = {title: svg.label, id: 0, expand: true, type: 'svg'}
+        let shape = {id: 0, el: this.svg}
+        let selectedShapes = this.svg.selector.shapes
+        if (selectedShapes.length === 0) {
           treeNode.selected = true
         }
         data.push(treeNode)
         shapes.push(shape)
         if (svg.children && svg.children().length > 0) {
           treeNode.children = svg.children().map((item, index) => {
-            let id = count + index + 1
-            let shape = {id: id, el: item}
+            let shape = {id: shapes.length, el: item}
             shapes.push(shape)
-            return this.traverseNode(item, id, shapes)
+            return this.traverseNode(item, selectedShapes, shapes)
           })
         }
       }
       return {data, shapes}
-    },
-    selected () {
-      let data = []
-      if (this.svg) {
-        data = this.svg.selector.shapes.map(item => item.attr('id'))
-      }
-      return data
-    }
-  },
-  watch: {
-    selected (val) {
-      let nodes = this.traverseSvg.data
-      nodes.forEach(item => {
-        let id = item.id
-        if (val.indexOf(id) >= 0) {
-          item.selected = true
-        }
-      })
     }
   },
   methods: {
-    traverseNode (treeNode, count, shapes) {
+    traverseNode (treeNode, selectedShapes, shapes) {
       let id = treeNode.attr('id')
       let data = {title: id, id: id, expand: true, type: 'shape'}
-      if (this.selected.indexOf(id) >= 0) {
+      if (selectedShapes.indexOf(treeNode) >= 0) {
         data.selected = true
       }
       if (treeNode.children && treeNode.children().length > 0) {
         data.children = treeNode.children().map((item, index) => {
-          let id = count + index + 1
-          let shape = {id: id, el: item}
+          let shape = {id: shapes.length, el: item}
           shapes.push(shape)
-          return this.traverseNode(item, id, shapes)
+          return this.traverseNode(item, selectedShapes, shapes)
         })
       }
       return data

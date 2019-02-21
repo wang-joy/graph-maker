@@ -118,15 +118,15 @@ export default {
   },
   // 获取弧线相关的属性
   getArcAttrs (shape) {
-    return [this.getId(shape), this.getType(shape), this.getLeft(shape), this.getTop(shape), this.getWidth(shape), this.getHeight(shape), this.getAngle(shape), this.getFill(shape), this.getFillOpacity(shape), this.getStroke(shape), this.getStrokeWidth(shape), this.getStrokeOpacity(shape), this.getStrokeDashArray(shape)]
+    return [this.getId(shape), this.getType(shape), this.getLeft(shape), this.getTop(shape), this.getAngle(shape), this.getFill(shape), this.getFillOpacity(shape), this.getStroke(shape), this.getStrokeWidth(shape), this.getStrokeOpacity(shape), this.getStrokeDashArray(shape)]
   },
   // 获取弓形相关的属性
   getArchAttrs (shape) {
-    return [this.getId(shape), this.getType(shape), this.getLeft(shape), this.getTop(shape), this.getWidth(shape), this.getHeight(shape), this.getAngle(shape), this.getFill(shape), this.getFillOpacity(shape), this.getStroke(shape), this.getStrokeWidth(shape), this.getStrokeOpacity(shape), this.getStrokeDashArray(shape)]
+    return [this.getId(shape), this.getType(shape), this.getLeft(shape), this.getTop(shape), this.getAngle(shape), this.getFill(shape), this.getFillOpacity(shape), this.getStroke(shape), this.getStrokeWidth(shape), this.getStrokeOpacity(shape), this.getStrokeDashArray(shape)]
   },
   // 获取扇形相关的属性
   getSectorAttrs (shape) {
-    return [this.getId(shape), this.getType(shape), this.getLeft(shape), this.getTop(shape), this.getWidth(shape), this.getHeight(shape), this.getAngle(shape), this.getFill(shape), this.getFillOpacity(shape), this.getStroke(shape), this.getStrokeWidth(shape), this.getStrokeOpacity(shape), this.getStrokeDashArray(shape)]
+    return [this.getId(shape), this.getType(shape), this.getLeft(shape), this.getTop(shape), this.getAngle(shape), this.getFill(shape), this.getFillOpacity(shape), this.getStroke(shape), this.getStrokeWidth(shape), this.getStrokeOpacity(shape), this.getStrokeDashArray(shape)]
   },
   // 获取组合相关的属性
   getGroupAttrs (shape) {

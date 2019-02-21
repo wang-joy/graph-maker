@@ -112,6 +112,8 @@ ResizeHandler.prototype.resize = function (event) {
       if (event.detail.i + 1 < array.length) {
         this.parameters.pointCoords2 = [array[event.detail.i + 1][0], array[event.detail.i + 1][1]]
       }
+    } else if (['arc', 'arch', 'sector'].indexOf(this.el.attr('type')) > -1) {
+      array = this.el.getPoints()
     }
     // Save the index and the point which is moved
     this.parameters.i = event.detail.i
@@ -328,11 +330,11 @@ ResizeHandler.prototype.resize = function (event) {
         // Snapping the point to the grid
         var snap = this.snapToGrid(diffX, diffY, this.parameters.pointCoords[0], this.parameters.pointCoords[1])
         if (this.el.attr('type') === 'curve') {
-          var pointArray = this.el.getPoints()
-          var i = this.parameters.i
-          var pointCoords = this.parameters.pointCoords
-          var pointCoords1 = this.parameters.pointCoords1
-          var pointCoords2 = this.parameters.pointCoords2
+          let pointArray = this.el.getPoints()
+          let i = this.parameters.i
+          let pointCoords = this.parameters.pointCoords
+          let pointCoords1 = this.parameters.pointCoords1
+          let pointCoords2 = this.parameters.pointCoords2
           if (i === 0) {
             pointArray[i][0] = pointCoords[0] + snap[0]
             pointArray[i][1] = pointCoords[1] + snap[1]
@@ -370,9 +372,42 @@ ResizeHandler.prototype.resize = function (event) {
           }
           // And plot the new this.el
           this.el.plotPoints(pointArray)
-        } else {
+        } else if (['arc', 'arch', 'sector'].indexOf(this.el.attr('type')) > -1){
+          let pointArray = this.el.getPoints()
+          let i = this.parameters.i
+          let pointCoords = this.parameters.pointCoords
+          let start = [pointArray[1][0], pointArray[1][1]]
+          let end = [pointArray[2][0], pointArray[2][1]]
+          let midPoint = [(start[0] + end[0]) / 2, (start[1] + end[1]) / 2]
+          let center = [pointArray[0][0], pointArray[0][1]]
+          let centerPoint = {x: pointArray[0][0], y: pointArray[0][1]}
+          if (i === 0) {
+            if (midPoint[0] === center[0]) {
+              centerPoint.x= pointCoords[0]
+              centerPoint.y = pointCoords[1] + snap[1]
+            } else if (midPoint[1] === center[1]){ 
+              centerPoint.x= pointCoords[0] + snap[0]
+              centerPoint.y = pointCoords[1]
+            } else {
+              let a = pointCoords[1] - midPoint[1]
+              let b = midPoint[0] - pointCoords[0]
+              let c = pointCoords[0] * midPoint[1] - midPoint[0] * pointCoords[1]
+              let m = pointCoords[0] + snap[0]
+              let n = pointCoords[1] + snap[1]
+              centerPoint.x = (b * b * m - a * b * n - a * c) / (a * a + b * b)
+              centerPoint.y = (a * a * n - a * b * m - b * c) / ( a * a + b * b)
+            }
+            this.el.setCenterPoint(centerPoint)
+          } else if (i === 1) {
+            let startPoint = {x: pointCoords[0] + snap[0], y: pointCoords[1] + snap[1]}
+            this.el.setStartPoint(startPoint)
+          } else if (i === 2) {
+            let endPoint = {x: pointCoords[0] + snap[0], y: pointCoords[1] + snap[1]}
+            this.el.setEndPoint(endPoint)
+          }
+        } else{
         // Get the point array
-          var array = this.el.array().valueOf()
+          let array = this.el.array().valueOf()
 
           // Changing the moved point in the array
           array[this.parameters.i][0] = this.parameters.pointCoords[0] + snap[0]

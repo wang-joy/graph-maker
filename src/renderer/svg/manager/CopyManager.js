@@ -1,4 +1,5 @@
 import ShapeUtils from '@/svg/utils/shape'
+import shapesFn from '@/svg/shape/index'
 // import SVG from 'svg.js'
 class CopyManager {
   shapes = []
@@ -7,9 +8,9 @@ class CopyManager {
       this.shapes = []
     }
     shapes.forEach(element => {
-      const cloneElement = element.clone()
-      // $.extend(true, cloneElement, element)
-      cloneElement.remove()
+      let type = element.attr('type')
+      let cloneElement = shapesFn[type]()
+      cloneElement.attr(element.attr()).transform(element.transform())
       this.shapes.push(cloneElement)
     })
   }
@@ -25,9 +26,11 @@ class CopyManager {
   paste (svg) {
     let clones = []
     this.shapes.forEach(item => {
-      let clone = item.clone(svg.draw).dmove(5, 5)
+      let type = item.attr('type')
+      let cloneElement = shapesFn[type]()
+      let clone = cloneElement.attr(item.attr()).transform(item.transform()).dmove(5, 5)
       // console.log(clone)
-      clone.remove()
+      // clone.remove()
       ShapeUtils.setShapeId(clone, svg)
       clones.push(clone)
     })

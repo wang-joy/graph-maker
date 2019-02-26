@@ -287,5 +287,33 @@ export default {
     let ycr1 = (tempY - tempCy) / r
     let ycr2 = (tempY + tempCy) / r
     return this.radian(xcr1, ycr1, -xcr2, -ycr2)
+  },
+  deepClone (shape, parent = null) {
+    let result = {}
+    let keys = Object.keys(shape)
+    let key = null
+    let tmp = null
+    let _parent = null
+    while (_parent) {
+      if (_parent.originParent === shape) {
+        return _parent.currentParent
+      }
+      _parent = _parent.parent
+    }
+    for (let i = 0; i < keys.length; i++) {
+      key = keys[i]
+      tmp = shape[key]
+      if (tmp && typeof tmp === 'object') {
+        result[key] = this.deepClone(tmp, {
+          // 递归执行深拷贝，将同级的待拷贝对象与新对象传递给parent，方便追溯循环引用
+          originParent: shape,
+          currentParent: result,
+          parent: parent
+        })
+      } else {
+        result[key] = tmp
+      }
+    }
+    return result
   }
 }
